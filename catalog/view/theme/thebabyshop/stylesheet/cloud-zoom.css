@@ -1,0 +1,37 @@
+.cloud-zoom-lens {
+border:1px solid #7aaed5;
+cursor:move;
+margin:0;
+}
+
+.cloud-zoom-title {
+font-family:Arial, Helvetica, sans-serif;
+position:absolute!important;
+background-color:#000;
+color:#fff;
+width:100%;
+text-align:center;
+font-weight:700;
+font-size:10px;
+top:0;
+padding:0;
+}
+
+.cloud-zoom-big {
+border:0 solid #FFF;
+overflow:hidden;
+}
+
+.cloud-zoom-loading {
+color:#FFF;
+background:#222;
+border:1px solid #000; 
+padding:3px;
+}
+
+.product-info .image #wrap #cloud-zoom-big{
+left:355px!important;
+-webkit-box-shadow:0 1px 1px rgba(0,0,0,0.1);
+-moz-box-shadow:0 1px 1px rgba(0,0,0,0.1);
+box-shadow:0 1px 1px rgba(0,0,0,0.1);
+}

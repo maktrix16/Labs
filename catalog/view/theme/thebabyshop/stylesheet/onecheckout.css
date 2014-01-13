@@ -1,0 +1,24 @@
+.onecheckout-heading{font-size:16px;color:#000;text-align:left;padding:8px 8px 8px 0;}
+.onecheckout-content{overflow:auto;color:#555;text-align:left;padding:0;}
+#checkout #login{display:none;width:98%;border:1px solid #ccc;margin:15px 0;padding:10px;}
+#checkout #login .close_la{position:relative;margin-bottom:-16px;top:-16px;right:-16px;cursor:pointer;float:right;width:16px;height:16px;background:url(../image/cancel.png) no-repeat scroll 0 0 transparent;}
+.checkout-page .ui-accordion-content{top:0;background:#FFF;border:none;width:880px;margin:0;padding:0 20px;}
+.checkout-page.ui-accordion .ui-accordion-header .ui-icon {background: none;}
+.checkout-page .ui-accordion-header{border:none;background:#7AAED5;color:#FFF;-moz-border-radius:0;-webkit-border-radius:0;-khtml-border-radius:0;border-radius:0;padding:15px;}
+.checkout-page .ui-accordion-header .ui-icon.ui-icon-triangle-1-s {background:none;}
+.onecheckout-content .left{float:left;width:48%;}
+.onecheckout-content .right{float:right;width:48%;}
+.onecheckout-content .small-field{width:90%;}
+.onecheckout-content .large-field{width:292px;}
+.onecheckout-content .divclear{clear:both;}
+.onecheckout-content p{margin:10px 0 0 0;}
+.onecheckout-content table {margin:20px 0;}
+.onecheckout-content select {width:300px!important}
+.onecheckout-product table {width:100%;}
+.onecheckout-product td{padding:15px;}
+.onecheckout-product thead td {color:#FFF!important;background-color:#7AAED5;font-size:13px;}
+.onecheckout-product tbody td{vertical-align:top;border-bottom:1px solid #DDD;}
+.onecheckout-product tfoot td{text-align:right;}
+.onecheckout-product tfoot td b{color:#333;}
+.onecheckout-product thead .name,.onecheckout-product thead .model,.onecheckout-product tbody .name,.onecheckout-product tbody .model{text-align:left;}
+.onecheckout-product thead .quantity,.onecheckout-product thead .price,.onecheckout-product thead .total,.onecheckout-product tbody .quantity,.onecheckout-product tbody .price,.onecheckout-product tbody .total{text-align:right;}

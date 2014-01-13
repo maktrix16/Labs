@@ -1,0 +1,176 @@
+.blogModule {
+margin-bottom:15px;
+}
+
+.blogModule ul {
+line-height:18px;
+list-style:none;
+margin:0;
+padding:0;
+}
+
+.blogModule li {
+overflow:hidden;
+margin-bottom:10px;
+}
+
+.blogModule .title {
+font-size:12px;
+font-weight:700;
+display:block;
+margin-bottom:5px;
+}
+
+.blogModule .title + .info span {
+padding-left:63px;
+}
+
+.blogModule .info {
+font-size:10px;
+display:block;
+}
+
+.blogModule p {
+margin:0;
+}
+
+.row-2,.row-3,.row-4 {
+float:left;
+padding-left:2%;
+}
+
+.row-first {
+clear:left;
+padding-left:0;
+}
+
+.row-2 {
+width:49%;
+}
+
+.row-3 {
+width:32%;
+}
+
+.row-4 {
+width:23.5%;
+}
+
+.boxPlain .box-heading {
+border:none;
+background:none;
+-webkit-border-radius:0;
+-moz-border-radius:0;
+-khtml-border-radius:0;
+border-radius:0;
+padding:0 15px;
+}
+
+.boxPlain .box-heading span {
+line-height:36px;
+}
+
+.boxPlain .box-content {
+border:none;
+background:none;
+padding:12px 15px 10px;
+}
+
+.artPlain li {
+padding-left:12px;
+background:url(../image/arrow.gif) no-repeat 0 4px;
+margin:0;
+}
+
+.artPlain .title {
+font-size:13px;
+}
+
+.artPlain .image,.artPlain .info {
+display:none;
+visibility:hidden;
+}
+
+.artHorz-2 ul,.artHorz-3 ul,.artHorz-4 ul,.artHorz-5 ul {
+overflow:hidden;
+}
+
+.artHorz-2 li,.artHorz-3 li,.artHorz-4 li,.artHorz-5 li {
+float:left;
+}
+
+.artHorz-2 li {
+width:47.9%;
+margin:5px 1% 10px;
+}
+
+.artHorz-3 li {
+width:30.9%;
+margin:5px 1% 10px;
+}
+
+.artHorz-4 li {
+width:22.9%;
+margin:5px 1%;
+}
+
+.artHorz-5 li {
+width:18.9%;
+margin:5px .5%;
+}
+
+.blogCategories li {
+background:url(../image/arrow.gif) no-repeat 0 5px;
+margin:0;
+padding:5px 24px 10px 0;
+}
+
+.blogCategories li a {
+font-size:12px;
+line-height:18px;
+}
+
+#blogArchive ul {
+display:none;
+}
+
+.blogArchives li {
+padding-left:7px;
+background:url(../image/arrow.gif) no-repeat 0 5px;
+margin:0;
+}
+
+.blogArchives li li li a {
+font-size:11px;
+}
+
+.blogModule li:last-child,.blogModule .image + .title {
+margin-bottom:0;
+}
+
+.blogModule li a,.blogModule li a:hover {
+text-decoration:none;
+}
+
+.blogModule .image img,.blogModule .recentComments .image {
+float:left;
+background:#FFF;
+margin-right:10px;
+padding:3px;
+}
+
+.blogCategories ul,.blogArchives ul {
+line-height:20px;
+}
+
+.blogCategories ul ul,.blogArchives ul ul {
+margin:4px 0;
+}
+
+.blogCategories li .blogActive,.blogArchives li .blogActive {
+font-weight:700;
+}
+
+.blogModule .recentComments,.blogModule .recentComments .title,.blogArchives li a,.blogArchives li li a {
+font-size:12px;
+}

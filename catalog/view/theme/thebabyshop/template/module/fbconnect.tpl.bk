@@ -1,0 +1,3 @@
+<?php if (!$logged) { ?>
+<a class="box-fbconnect-a" href="<?php echo $fbconnect_url; ?>"><?php echo $fbconnect_button; ?></a>
+<?php } ?>
