@@ -36,9 +36,9 @@ LOG;
                     fputs($handle, $logging);  // write the Data to file
                     fclose($handle);           // close the file
     		} else {  // if first method is not working, for example because of wrong file permissions, email the data
-                    $to = 'lso@thebabyshop.com';  
+                    $to = 'kip@thebabyshop.com';  
                     $subject = 'HACK ATTEMPT';
-                    $header = 'From: lso@thebabyshop.com';
+                    $header = 'From: kip@thebabyshop.com';
                     if (mail($to, $subject, $logging, $header)) {
                         echo "Sent notice to admin.";
                     }
@@ -101,7 +101,7 @@ LOG;
                     return "The email address you entered was invalid. Please try again!"; 
                 } 
                 //   CHANGE THE BELOW VARIABLES TO YOUR NEEDS
-                $to = 'technical@thebabyshop.com';
+                $to = 'info@thebabyshop.com';
                 $subject = 'Gift Basket Reqest';
                 $headers = "From: " . $cleanedFrom . "\r\n";
                 $headers .= "Reply-To: ". strip_tags($_POST['req-email']) . "\r\n";
