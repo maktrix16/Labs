@@ -1,0 +1,542 @@
+<modification>
+
+	<id>Combined products</id>
+	<version>1.0.3.3</version>
+	<vqmver>2.1.6</vqmver>
+	<author>The Ard - www.theard.nl</author>
+	
+	<file name="admin/view/template/catalog/product_form.tpl">
+		<operation>
+			<search position="before"><![CDATA[
+<td><?php echo $entry_sku; ?></td>
+			]]></search>
+			<add><![CDATA[
+             <td>Is combi product:</td>
+              <td><?php if ($is_combi) { ?>
+                <input type="radio" name="is_combi" value="1" checked="checked" />
+                <?php echo $text_yes; ?>
+                <input type="radio" name="is_combi" value="0" />
+                <?php echo $text_no; ?>
+                <?php } else { ?>
+                <input type="radio" name="is_combi" value="1" />
+                <?php echo $text_yes; ?>
+                <input type="radio" name="is_combi" value="0" checked="checked" />
+                <?php echo $text_no; ?>
+                <?php } ?></td>
+            </tr>
+			<tr>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+<div id="tab-attribute">
+			]]></search>
+			<add><![CDATA[
+			  <?php
+			  if ($is_combi == 1){
+			  ?>
+			<div id="tab-combi">
+          <table id="component" class="list">
+            <thead>
+			<tr>
+              <td>Component products:</td>
+              <td><input type="text" name="component" value="" /></td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td><div id="product-component">
+                  <?php $class = 'odd'; ?>
+                  <?php foreach ($product_component as $product_component) { ?>
+                  <?php $class = ($class == 'even' ? 'odd' : 'even'); ?>
+                  <div id="product-component<?php echo $product_component['product_id']; ?>" class="<?php echo $class; ?>">
+				  <table>
+				  <tr>
+				  <td style="width: 180px; border: 0px;">
+				  <?php echo $product_component['name']; ?>
+				  </td>
+				  <td style="width: 150px; border: 0px;">
+				  <?php
+				  if (!isset($product_component['comp_quantity'])){
+				  ?>
+				  Quantity: <input name="product_component_quantity[]" value="1" size="2" /><img src="view/image/delete.png" alt="" />
+                  <?php
+				  } else {
+				  ?>
+				  Quantity: <input name="product_component_quantity[]" value="<?php echo $product_component['comp_quantity']; ?>" size="2" /><img src="view/image/delete.png" alt="" />
+                  <?php
+				  }
+				  ?>
+				  <input type="hidden" name="product_component[]" value="<?php echo $product_component['product_id']; ?>" />
+				  </td></tr></table>
+                  </div>
+                  <?php } ?>
+                </div></td>
+            </tr>
+          </table>
+        </div>
+		<?php
+		}
+		?>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+<div id="tabs" class="htabs"><a href="#tab-general"><?php echo $tab_general; ?></a><a href="#tab-data"><?php echo $tab_data; ?></a><a href="#tab-links"><?php echo $tab_links; ?></a><a href="#tab-attribute"><?php echo $tab_attribute; ?></a><a href="#tab-option"><?php echo $tab_option; ?></a><a href="#tab-profile"><?php echo $tab_profile; ?></a><a href="#tab-discount"><?php echo $tab_discount; ?></a><a href="#tab-special"><?php echo $tab_special; ?></a><a href="#tab-image"><?php echo $tab_image; ?></a><a href="#tab-reward"><?php echo $tab_reward; ?></a><a href="#tab-design"><?php echo $tab_design; ?></a></div>
+			]]></search>
+			<add><![CDATA[
+		      <div id="tabs" class="htabs"><a href="#tab-general"><?php echo $tab_general; ?></a><a href="#tab-data"><?php echo $tab_data; ?></a><a href="#tab-links"><?php echo $tab_links; ?></a>
+			  <?php
+			  if ($is_combi == 1){
+			  ?>
+			  <a href="#tab-combi">Combi</a>
+			  <?php
+			  }
+			  ?>
+			  <a href="#tab-attribute"><?php echo $tab_attribute; ?></a>
+			  <?php
+			  if ($is_combi != 1){
+			  ?>
+			  <a href="#tab-option"><?php echo $tab_option; ?></a>
+			  <?php } ?>
+			  <a href="#tab-discount"><?php echo $tab_discount; ?></a><a href="#tab-special"><?php echo $tab_special; ?></a><a href="#tab-image"><?php echo $tab_image; ?></a><a href="#tab-reward"><?php echo $tab_reward; ?></a><a href="#tab-design"><?php echo $tab_design; ?></a></div>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+$('input[name=\'related\']').autocomplete({
+			]]></search>
+			<add><![CDATA[
+$('input[name=\'component\']').autocomplete({
+	delay: 500,
+	source: function(request, response) {
+		$.ajax({
+			url: 'index.php?route=catalog/product/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
+			dataType: 'json',
+			success: function(json) {		
+				response($.map(json, function(item) {
+					return {
+						label: item.name,
+						value: item.product_id
+					}
+				}));
+			}
+		});
+	}, 
+	select: function(event, ui) {
+		$('#product-component' + ui.item.value).remove();
+		
+		$('#product-component').append('<div id="product-component' + ui.item.value + '">' + ui.item.label + '<img src="view/image/delete.png" alt="" />Quantity: <input name="product_component_quantity[]" value="1" size="2" /><input type="hidden" name="product_component[]" value="' + ui.item.value + '" /></div>');
+
+		$('#product-component div:odd').attr('class', 'odd');
+		$('#product-component div:even').attr('class', 'even');
+				
+		return false;
+	},
+	focus: function(event, ui) {
+      return false;
+   }
+});
+
+$('#product-component div img').live('click', function() {
+	$(this).parent().remove();
+	
+	$('#product-component div:odd').attr('class', 'odd');
+	$('#product-component div:even').attr('class', 'even');	
+});
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[		
+<td><input type="text" name="quantity" value="<?php echo $quantity; ?>" size="2" /></td>
+			]]></search>
+			<add><![CDATA[
+			  <?php
+			  if ($is_combi == 1){
+			  unset($caq);
+			  unset($combi_available_quantity);
+			  $product_id2 = ($this->request->get['product_id']);
+			  $query1 = ("SELECT * FROM `" . DB_PREFIX . "product_combi` WHERE product_id = " . $product_id2 . "");
+$result1 = mysql_query($query1);
+while($row1 = mysql_fetch_assoc($result1)) {
+		$query2 = ("SELECT quantity FROM `" . DB_PREFIX . "product` WHERE product_id = " . $row1['component_id'] . "");
+		$cpq = ($row1['component_quantity']);
+		$result2 = mysql_query($query2);
+			while($row2 = mysql_fetch_assoc($result2)) {
+				$caq = floor(($row2['quantity']) / $cpq);
+				if (!isset($combi_available_quantity)) {
+				$combi_available_quantity = $caq;
+				}
+				elseif ($combi_available_quantity > $caq) {
+				$combi_available_quantity =  $caq;
+				};
+			};
+		};
+		if (!isset($combi_available_quantity)) {
+		$combi_available_quantity = 0;
+		}
+		?>
+              <td><input type="hidden" name="quantity" value="<?php echo $combi_available_quantity; ?>" size="2" /><?php echo $combi_available_quantity; ?> = Maximum availablity based on components</td>
+			  <?php }
+			  if ($is_combi == 0){
+			  ?>
+			   <td><input type="text" name="quantity" value="<?php echo $quantity; ?>" size="2" /></td>
+			   <?php } ?>
+	
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[		
+<div id="tab-option">
+			]]></search>
+			<add><![CDATA[
+			  <?php
+			  if ($is_combi != 1){
+			  ?>
+		]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[		
+<div id="tab-discount">
+			]]></search>
+			<add><![CDATA[
+			  <?php } ?>
+		]]></add>
+		</operation>
+	</file>
+	
+	<file name="admin/view/template/catalog/product_list.tpl">
+		<operation>
+			<search position="replace" offset="6"><![CDATA[
+<td class="right"><?php if ($product['quantity'] <= 0) { ?>
+			]]></search>
+			<add><![CDATA[
+						  <?php
+			$is_combi = ($product['is_combi']);
+			  if ($is_combi == 1){
+			  unset($caq);
+			  unset($combi_available_quantity);
+			  $query1 = ("SELECT * FROM `" . DB_PREFIX . "product_combi` WHERE product_id = " . $product['product_id'] . "");
+$result1 = mysql_query($query1);
+while($row1 = mysql_fetch_assoc($result1)) {
+		$query2 = ("SELECT quantity FROM `" . DB_PREFIX . "product` WHERE product_id = " . $row1['component_id'] . "");
+		$cpq = ($row1['component_quantity']);
+		$result2 = mysql_query($query2);
+			while($row2 = mysql_fetch_assoc($result2)) {
+				$caq = floor(($row2['quantity']) / $cpq);
+				if (!isset($combi_available_quantity)) {
+				$combi_available_quantity = $caq;
+				}
+				elseif ($combi_available_quantity > $caq) {
+				$combi_available_quantity =  $caq;
+				};
+			};
+		};
+		if (!isset($combi_available_quantity)) {
+		$combi_available_quantity = 0;
+		}
+		?>
+              <td class="right"><?php echo $combi_available_quantity; ?> = Maximum availablity based on components</td>
+			  <?php }
+			  if ($is_combi == 0){ ?>
+			     <td class="right"><?php if ($product['quantity'] <= 0) { ?>
+                <span style="color: #FF0000;"><?php echo $product['quantity']; ?></span>
+                <?php } elseif ($product['quantity'] <= 5) { ?>
+                <span style="color: #FFA500;"><?php echo $product['quantity']; ?></span>
+                <?php } else { ?>
+                <span style="color: #008000;"><?php echo $product['quantity']; ?></span>
+                <?php } ?></td>
+			  <?php } ?>
+			   
+			]]></add>
+		</operation>
+	</file>
+	
+	
+	
+	<file name="admin/controller/catalog/product.php">
+		<operation>
+			<search position="before"><![CDATA[
+if (isset($this->request->post['shipping'])) {
+			]]></search>
+			<add><![CDATA[
+    	if (isset($this->request->post['is_combi'])) {
+      		$this->data['is_combi'] = $this->request->post['is_combi'];
+    	} elseif (!empty($product_info)) {
+      		$this->data['is_combi'] = $product_info['is_combi'];
+    	} else {
+			$this->data['is_combi'] = 0;
+		}
+	
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+						'price'      => $result['price'],
+			]]></search>
+			<add><![CDATA[
+				'is_combi'	=> $result['is_combi'],
+			]]></add>
+		</operation>		
+		<operation>
+			<search position="before"><![CDATA[
+if (isset($this->request->post['product_related'])) {
+			]]></search>
+			<add><![CDATA[
+		if (isset($this->request->post['product_component'])) {
+			$products = $this->request->post['product_component'];
+		} elseif (isset($this->request->get['product_id'])) {		
+			$products = $this->model_catalog_product->getProductComponent($this->request->get['product_id']);
+		} else {
+			$products = array();
+		}
+	
+		$this->data['product_component'] = array();
+		
+		foreach ($products as $product_id) {
+			$component_info = $this->model_catalog_product->getProduct($product_id);
+			$product_id2 = ($this->request->get['product_id']);
+			$query_comp_quan = ("SELECT * FROM " . DB_PREFIX . "product_combi WHERE (product_id = '" . $product_id2 . "' AND component_id = '" . $product_id . "')");
+			$comp_quan = mysql_query($query_comp_quan);
+			$comp_quan_array = mysql_fetch_array($comp_quan);
+			if ($component_info) {
+				$this->data['product_component'][] = array(
+					'product_id' => $component_info['product_id'],
+					'name'       => $component_info['name'],
+					'comp_quantity'	=> $comp_quan_array['component_quantity']
+				);
+			}
+		}	
+			]]></add>
+		</operation>
+	</file>			
+
+	<file name="admin/model/catalog/product.php">
+		<operation>
+			<search position="after"><![CDATA[
+public function editProduct($product_id, $data) {
+			]]></search>
+			<add><![CDATA[
+		$this->db->query("UPDATE " . DB_PREFIX . "product SET is_combi = '" . $this->db->escape($data['is_combi']) . "' WHERE product_id = '" . (int)$product_id . "'");
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+public function editProduct($product_id, $data) {
+			]]></search>
+			<add><![CDATA[
+		$this->db->query("DELETE FROM " . DB_PREFIX . "product_combi WHERE product_id = '" . (int)$product_id . "'");
+		
+		if (isset($data['product_component'])) {
+		$stage = 0;
+			foreach ($data['product_component'] as $component_id) {
+				$pcq = $data['product_component_quantity'][$stage];
+				$stage = ($stage + 1);
+				$this->db->query("DELETE FROM " . DB_PREFIX . "product_combi WHERE product_id = '" . (int)$product_id . "' AND component_id = '" . (int)$component_id . "'");
+				$this->db->query("INSERT INTO " . DB_PREFIX . "product_combi SET product_id = '" . (int)$product_id . "', component_quantity = '" . (int)$pcq . "', component_id = '" . (int)$component_id . "'");
+			}
+		}
+		]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+public function deleteProduct($product_id) {
+			]]></search>
+			<add><![CDATA[
+		$this->db->query("DELETE FROM " . DB_PREFIX . "product_combi WHERE product_id = '" . (int)$product_id . "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "product_combi WHERE component_id = '" . (int)$product_id . "'");
+		]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+public function getTotalProducts($data = array()) {
+			]]></search>
+			<add><![CDATA[
+		public function getProductComponent($product_id) {
+		$product_component_data = array();
+		
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_combi WHERE product_id = '" . (int)$product_id . "'");
+		
+		foreach ($query->rows as $result) {
+			$product_component_data[] = $result['component_id'];
+		}
+		
+		return $product_component_data;
+	}
+	
+		]]></add>
+		</operation>
+		<operation>
+			<search position="replace" offset="7"><![CDATA[
+public function copyProduct($product_id) {
+			]]></search>
+			<add><![CDATA[
+	public function copyProduct($product_id) {
+		$query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE p.product_id = '" . (int)$product_id . "' AND pd.language_id = '" . (int)$this->config->get('config_language_id') . "'");
+		
+		if ($query->num_rows) {
+			$data = array();
+			
+			$data = $query->row;
+			$data = array_merge($data, array('product_combi' => $this->getProductComponent($product_id)));
+
+		]]></add>
+		</operation>					
+		<operation>
+			<search position="after" index="2"><![CDATA[
+$this->cache->delete('product');
+			]]></search>
+			<add><![CDATA[
+				$query = mysql_query("SELECT product_id FROM " . DB_PREFIX . "product WHERE is_combi = 1");
+				while($id = mysql_fetch_assoc($query)) {
+					$query1 = mysql_query("SELECT pc.product_id, pc.component_id, pc.component_quantity, p.quantity FROM " . DB_PREFIX . "product p JOIN " . DB_PREFIX . "product_combi pc ON pc.component_id = p.product_id WHERE pc.product_id = '" . $id['product_id'] . "'");
+					unset($combi_available_quantity);		
+					while($row1 = mysql_fetch_assoc($query1)) {
+						$cpq = ($row1['component_quantity']);
+						$caq = floor(($row1['quantity']) / $cpq);
+							if (!isset($combi_available_quantity)) {
+							$combi_available_quantity = $caq;
+							}
+							elseif ($combi_available_quantity > $caq) {
+							$combi_available_quantity =  $caq;
+							};
+						};		
+					mysql_query("UPDATE " . DB_PREFIX . "product SET quantity = '" . $combi_available_quantity . "' WHERE product_id = '" . $id['product_id'] . "'");
+				};
+		]]></add>
+		</operation>
+	</file>	
+	
+	<file name="admin/model/sale/order.php">
+		<operation>
+			<search position="replace"><![CDATA[
+$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = (quantity - " . (int)$order_product['quantity'] . ") WHERE product_id = '" . (int)$order_product['product_id'] . "' AND subtract = '1'");
+			]]></search>
+			<add><![CDATA[
+				$query = mysql_query("SELECT is_combi FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$order_product['product_id'] . "'");
+					while($id = mysql_fetch_assoc($query)) {
+					$ic = $id['is_combi'];
+					};
+					if ($ic == 1){
+					$query = mysql_query("SELECT * FROM " . DB_PREFIX . "product_combi WHERE product_id = '" . (int)$order_product['product_id'] . "'");
+						while($cp = mysql_fetch_assoc($query)) {
+						$query2 = mysql_query("UPDATE " . DB_PREFIX . "product SET quantity = (quantity - " . ($cp['component_quantity'] * (int)$order_product['quantity']) . ") WHERE product_id = '" . $cp['component_id'] . "'");
+						};
+					} else {
+						$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = (quantity - " . (int)$order_product['quantity'] . ") WHERE product_id = '" . (int)$order_product['product_id'] . "' AND subtract = '1'");
+					};
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+$this->db->query("UPDATE `" . DB_PREFIX . "product` SET quantity = (quantity + " . (int)$product['quantity'] . ") WHERE product_id = '" . (int)$product['product_id'] . "' AND subtract = '1'");
+			]]></search>
+			<add><![CDATA[
+				$query = mysql_query("SELECT is_combi FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$product['product_id'] . "'");
+					while($id = mysql_fetch_assoc($query)) {
+					$ic = $id['is_combi'];
+					};
+					if ($ic == 1){
+					$query = mysql_query("SELECT * FROM " . DB_PREFIX . "product_combi WHERE product_id = '" . (int)$product['product_id'] . "'");
+						while($cp = mysql_fetch_assoc($query)) {
+						$query2 = mysql_query("UPDATE " . DB_PREFIX . "product SET quantity = (quantity + " . ($cp['component_quantity'] * (int)$product['quantity']) . ") WHERE product_id = '" . $cp['component_id'] . "'");
+						};
+					} else {
+					$this->db->query("UPDATE `" . DB_PREFIX . "product` SET quantity = (quantity + " . (int)$product['quantity'] . ") WHERE product_id = '" . (int)$product['product_id'] . "' AND subtract = '1'");
+					};
+					
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+if (isset($data['order_voucher'])) {
+			]]></search>
+			<add><![CDATA[
+			$query = mysql_query("SELECT product_id FROM " . DB_PREFIX . "product WHERE is_combi = 1");
+				while($id = mysql_fetch_assoc($query)) {
+					$query1 = mysql_query("SELECT pc.product_id, pc.component_id, pc.component_quantity, p.quantity FROM " . DB_PREFIX . "product p JOIN " . DB_PREFIX . "product_combi pc ON pc.component_id = p.product_id WHERE pc.product_id = '" . $id['product_id'] . "'");
+					unset($combi_available_quantity);		
+					while($row1 = mysql_fetch_assoc($query1)) {
+						$cpq = ($row1['component_quantity']);
+						$caq = floor(($row1['quantity']) / $cpq);
+							if (!isset($combi_available_quantity)) {
+							$combi_available_quantity = $caq;
+							}
+							elseif ($combi_available_quantity > $caq) {
+							$combi_available_quantity =  $caq;
+							};
+						};		
+					mysql_query("UPDATE " . DB_PREFIX . "product SET quantity = '" . $combi_available_quantity . "' WHERE product_id = '" . $id['product_id'] . "'");
+				};
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+$this->db->query("DELETE FROM `" . DB_PREFIX . "order` WHERE order_id = '" . (int)$order_id . "'");
+			]]></search>
+			<add><![CDATA[
+			$query = mysql_query("SELECT product_id FROM " . DB_PREFIX . "product WHERE is_combi = 1");
+				while($id = mysql_fetch_assoc($query)) {
+					$query1 = mysql_query("SELECT pc.product_id, pc.component_id, pc.component_quantity, p.quantity FROM " . DB_PREFIX . "product p JOIN " . DB_PREFIX . "product_combi pc ON pc.component_id = p.product_id WHERE pc.product_id = '" . $id['product_id'] . "'");
+					unset($combi_available_quantity);		
+					while($row1 = mysql_fetch_assoc($query1)) {
+						$cpq = ($row1['component_quantity']);
+						$caq = floor(($row1['quantity']) / $cpq);
+							if (!isset($combi_available_quantity)) {
+							$combi_available_quantity = $caq;
+							}
+							elseif ($combi_available_quantity > $caq) {
+							$combi_available_quantity =  $caq;
+							};
+						};		
+					mysql_query("UPDATE " . DB_PREFIX . "product SET quantity = '" . $combi_available_quantity . "' WHERE product_id = '" . $id['product_id'] . "'");
+				};
+			]]></add>
+		</operation>
+				
+	</file>
+	
+	<file name="catalog/model/checkout/order.php">
+		<operation>
+			<search position="replace"><![CDATA[
+$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = (quantity - " . (int)$order_product['quantity'] . ") WHERE product_id = '" . (int)$order_product['product_id'] . "' AND subtract = '1'");
+			]]></search>
+			<add><![CDATA[
+				$query = mysql_query("SELECT is_combi FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$order_product['product_id'] . "'");
+					while($id = mysql_fetch_assoc($query)) {
+					$ic = $id['is_combi'];
+					};
+					if ($ic == 1){
+					$query = mysql_query("SELECT * FROM " . DB_PREFIX . "product_combi WHERE product_id = '" . (int)$order_product['product_id'] . "'");
+						while($cp = mysql_fetch_assoc($query)) {
+						$query2 = mysql_query("UPDATE " . DB_PREFIX . "product SET quantity = (quantity - " . ($cp['component_quantity'] * (int)$order_product['quantity']) . ") WHERE product_id = '" . $cp['component_id'] . "'");
+						};
+					} else {
+						$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = (quantity - " . (int)$order_product['quantity'] . ") WHERE product_id = '" . (int)$order_product['product_id'] . "' AND subtract = '1'");
+					};
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+$this->cache->delete('product');
+			]]></search>
+			<add><![CDATA[
+			$query = mysql_query("SELECT product_id FROM " . DB_PREFIX . "product WHERE is_combi = 1");
+				while($id = mysql_fetch_assoc($query)) {
+					$query1 = mysql_query("SELECT pc.product_id, pc.component_id, pc.component_quantity, p.quantity FROM " . DB_PREFIX . "product p JOIN " . DB_PREFIX . "product_combi pc ON pc.component_id = p.product_id WHERE pc.product_id = '" . $id['product_id'] . "'");
+					unset($combi_available_quantity);		
+					while($row1 = mysql_fetch_assoc($query1)) {
+						$cpq = ($row1['component_quantity']);
+						$caq = floor(($row1['quantity']) / $cpq);
+							if (!isset($combi_available_quantity)) {
+							$combi_available_quantity = $caq;
+							}
+							elseif ($combi_available_quantity > $caq) {
+							$combi_available_quantity =  $caq;
+							};
+						};		
+					mysql_query("UPDATE " . DB_PREFIX . "product SET quantity = '" . $combi_available_quantity . "' WHERE product_id = '" . $id['product_id'] . "'");
+				};
+			]]></add>
+		</operation>
+	</file>
+</modification>

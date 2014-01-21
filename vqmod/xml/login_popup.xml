@@ -1,0 +1,23 @@
+<modification>
+    <id>LoginPopup</id>
+    <version>Login Popup - 1.0</version>
+    <vqmver>2.1.7</vqmver>
+    <author>Handborn</author>
+	<file name="catalog/view/theme/default/template/common/header.tpl">
+    	 <operation>
+            <search position="after"><![CDATA[
+            	<script type="text/javascript" src="catalog/view/javascript/common.js"></script>
+            ]]></search>
+            <add><![CDATA[
+                <script type="text/javascript" src="catalog/view/javascript/login_popup.js"></script>
+                <script type="text/javascript" src="catalog/view/theme/default/stylesheet/login_popup.css"></script>
+            ]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[<div id="welcome">]]></search>
+            <add><![CDATA[
+               <div id="welcome" <?php if (!$logged) { echo "class='login_popup'";}?> >
+            ]]></add>
+        </operation>
+	</file>
+</modification>

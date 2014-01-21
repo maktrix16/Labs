@@ -1,0 +1,132 @@
+<modification>
+	<id>PayPal Transaction ID</id>
+    <version>1.0.3</version>
+    <vqmver>2.1.0</vqmver>
+    <author>Kevin Davidson</author>
+	
+	<file name="admin/controller/payment/pp_standard.php">
+		<operation error="log">
+			<search position="after"><![CDATA[public function index() {]]></search>
+			<add><![CDATA[$this->createdb();]]></add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="before"><![CDATA[protected function validate() {]]></search>
+			<add><![CDATA[private function createdb() {
+			$sql = "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "paypal_data` (
+			`order_id` int(11) NOT NULL default '0',
+			`pp_transaction_id` varchar(17) NOT NULL,
+			PRIMARY KEY  (`order_id`)
+			) ENGINE=MyISAM DEFAULT CHARSET=utf8";
+		$this->db->query($sql);
+		}]]></add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="before"><![CDATA[private function validate() {]]></search>
+			<add><![CDATA[private function createdb() {
+			$sql = "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "paypal_data` (
+			`order_id` int(11) NOT NULL default '0',
+			`pp_transaction_id` varchar(17) NOT NULL,
+			PRIMARY KEY  (`order_id`)
+			) ENGINE=MyISAM DEFAULT CHARSET=utf8";
+		$this->db->query($sql);
+		}]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/payment/pp_standard.php">
+		<operation error="log">
+			<search position="after"><![CDATA[$order_status_id = $this->config->get('config_order_status_id');]]></search>
+			<add><![CDATA[$this->db->query("INSERT INTO `" . DB_PREFIX . "paypal_data` SET order_id = '" . (int)$order_id . "', pp_transaction_id = '" . $this->db->escape($this->request->post['txn_id']) . "' ON DUPLICATE KEY UPDATE order_id=order_id");]]></add>
+		</operation>
+	</file>
+	
+	<file name="admin/controller/payment/pp_pro.php">
+		<operation error="log">
+			<search position="after"><![CDATA[public function index() {]]></search>
+			<add><![CDATA[$this->createdb();]]></add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="before"><![CDATA[protected function validate() {]]></search>
+			<add><![CDATA[private function createdb() {
+			$sql = "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "paypal_data` (
+			`order_id` int(11) NOT NULL default '0',
+			`pp_transaction_id` varchar(17) NOT NULL,
+			PRIMARY KEY  (`order_id`)
+			) ENGINE=MyISAM DEFAULT CHARSET=utf8";
+		$this->db->query($sql);
+		}]]></add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="before"><![CDATA[private function validate() {]]></search>
+			<add><![CDATA[private function createdb() {
+			$sql = "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "paypal_data` (
+			`order_id` int(11) NOT NULL default '0',
+			`pp_transaction_id` varchar(17) NOT NULL,
+			PRIMARY KEY  (`order_id`)
+			) ENGINE=MyISAM DEFAULT CHARSET=utf8";
+		$this->db->query($sql);
+		}]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/payment/pp_pro.php">
+		<operation error="log">
+			<search position="after"><![CDATA[$message .= 'TRANSACTIONID: ' . $response_info['TRANSACTIONID'] . "\n";]]></search>
+			<add><![CDATA[$this->db->query("INSERT INTO `" . DB_PREFIX . "paypal_data` SET order_id = '" . (int)$order_info['order_id'] . "', pp_transaction_id = '" . $this->db->escape($response_info['TRANSACTIONID']) . "' ON DUPLICATE KEY UPDATE order_id=order_id");]]></add>
+		</operation>
+	</file>
+	
+	<file name="admin/language/english/sale/order.php">
+		<operation error="log">
+			<search position="after"><![CDATA[$_['text_payment_method']     = 'Payment Method:';]]></search>
+			<add><![CDATA[$_['text_PaypalTransaction']                              		= 'PayPal Transaction ID:';]]></add>
+		</operation>
+	</file>
+	
+	<file name="admin/model/sale/order.php">
+		<operation error="log">
+			<search position="after"><![CDATA[$reward = 0;]]></search>
+			<add><![CDATA[$txn_id = "";]]></add>
+		</operation>
+		
+		<operation error="log">
+			<search position="before"><![CDATA[$country_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "country` WHERE country_id = '" . (int)$order_query->row['payment_country_id'] . "'");]]></search>
+			<add><![CDATA[$txn_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "paypal_data` WHERE order_id = '" . (int)$order_id . "'");
+				if ($txn_query->num_rows) {
+					$txn_id = $txn_query->row['pp_transaction_id'];
+				}]]></add>
+		</operation>
+		
+		<operation error="log">
+			<search position="after"><![CDATA['payment_method'          => $order_query->row['payment_method'],]]></search>
+			<add><![CDATA['payment_PaypalTransaction'          => $txn_id,]]></add>
+		</operation>
+	</file>
+	
+	<file name="admin/controller/sale/order.php">
+		<operation error="log">
+			<search position="after"><![CDATA[$this->data['text_payment_method'] = $this->language->get('text_payment_method');]]></search>
+			<add><![CDATA[$this->data['text_PaypalTransaction'] = $this->language->get('text_PaypalTransaction');]]></add>
+		</operation>
+		
+		<operation error="log">
+			<search position="before" offset="1"><![CDATA[if ($order_info['total'] < 0) {]]></search>
+			<add><![CDATA[$this->data['payment_PaypalTransaction'] = $order_info['payment_PaypalTransaction'];]]></add>
+		</operation>
+	</file>
+	
+	<file name="admin/view/template/sale/order_info.tpl">
+		<operation error="log">
+			<search position="after" offset="1"><![CDATA[<td><?php echo $payment_method; ?></td>]]></search>
+			<add><![CDATA[<?php if(strpos($payment_method, "PayPal") !== false) { ?><tr>
+				<td><?php echo $text_PaypalTransaction; ?></td>
+            	<td><a href="https://www.paypal.com/ca/cgi-bin/webscr?cmd=_view-a-trans&id=<?php echo $payment_PaypalTransaction; ?>" target="_blank"><?php echo $payment_PaypalTransaction; ?></a></td>
+			</tr><?php } ?>]]></add>
+		</operation>
+	</file>
+	
+</modification>

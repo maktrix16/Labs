@@ -1,0 +1,379 @@
+<modification>
+	<id><![CDATA[Cache for OpenCart by blackaqua.com]]></id>
+	<version><![CDATA[3.35]]></version>
+	<vqmver><![CDATA[]]></vqmver>
+	<author><![CDATA[blackaqua - http://blackaqua.com - ocsupport@blackaqua.com]]></author>
+	<file name="system/startup.php">
+		<operation>
+			<search position="before"><![CDATA[// Magic]]></search>
+			<add><![CDATA[
+			
+// Start of Cache Script (c) blackaqua 2012 - ocsupport@blackaqua.com
+
+// Configuration Variables here
+// No error checking yet, be sure to enter the correct settings
+
+$baCacheOn	= TRUE;			// Turn the cache on (TRUE) or off (FALSE) Default: True!
+$baCacheLog = FALSE;		// Log cache run time in HTML source code - Rough guide & depends on load at measurement time. Default: FALSE (disable). Leaving on will stop file uploads working (bug).
+$baCacheGzip = 2;			// Compress content to reduce bandwidth (Requires zlib, default: 2). 2 = set via php ini, 1 = use inline compression. 2 is preferred, use 1 if you are in a restricted environment. Use FALSE to turn off
+$baCacheShowAdmin = TRUE;	// Show the cache admin panel when browsing store front while logged in as admin user (default: TRUE). Use FALSE to turn off
+
+$baCacheAlt = FALSE;		// Set the method of caching (default: FALSE)
+							// TRUE: Probability, reload cache as probability
+							// FALSE: Time, reload cache after a specified time has elapsed (recommended)
+$baCacheProb = 5;			// Probability Setting to reload cache (default: 5). (eg 1 = 1 in 100; 10 = 1 in 10; 50 = 1 in 2 etc)
+$baCacheTime = 10080;		// File Cache time in MINUTES (default: 10080 (7 days))
+
+$baCacheExcl = 1;			// Set FALSE to cache everything, set to a value of 1 or 2 exclude your restrictions.
+							// 1 = Find value and exclude all matches. enter everything after domain.com - eg http://www.store.com/index.php?route=information/contact would become index.php?route=information/contact
+							// 2 = Use Regex to exclude more specific matches (use value 1 if you don't know what this is), at expense to page loading time. You need to escape your expressions eg with #expression#, no error checking is performed
+
+//Enter your links to exclude here, with each enclosed in single quotes ('), seperated by a comma (,).
+$baLinkExcl = array('index.php?route=information/contact/captcha','index.php?route=product/product/captcha','index.php?route=account/login_popup','index.php?route=account/register_popup','index.php?route=account/login','index.php?route=account/register','register','login','login#_=_');
+
+$baUserExcl = FALSE;		// Skip caching files for certain users (set TRUE) - eg if you are being violated by search engine crawlers on little used pages.
+// The below user agents will not generate a page cache. Consider the fact that these are actually useful in building your page cache though...
+$baUserAgents = array('Baidu', 'Google', 'bingbot', 'msnbot', 'Yahoo', 'Yandex', 'ia_archiver');
+
+//////////////////////////////////////
+// Start of Script (No need to edit)
+//////////////////////////////////////
+if ($baUserExcl == true && $baCacheOn == true) {
+	foreach ($baUserAgents as $value) {
+		if (stripos($_SERVER['HTTP_USER_AGENT'], $value)) {
+			$baCacheOn = false;
+		}
+	}
+}
+
+if ($baCacheExcl != false) {
+	// if ($baCacheExcl == 1 && in_array($_SERVER['REQUEST_URI'],$baLinkExcl)) { doesn't work for partial strings pfffft
+	if ($baCacheExcl == 1) {
+		foreach ($baLinkExcl as $pattern) {
+			if (stripos($_SERVER['REQUEST_URI'], $pattern)) {
+				$baCacheOn = false;
+			}
+		}
+	} elseif ($baCacheExcl == 2) {
+		foreach ($baLinkExcl as $pattern) {
+			if (preg_match($pattern, $_SERVER['REQUEST_URI'])) {
+				$baCacheOn = false;
+			}
+		}
+	}
+}
+
+define('baCacheShowAdmin', $baCacheShowAdmin);
+
+if ($baCacheOn == true) {
+	// Measure script start time - being honest here as we're including cache calculations in total page time
+	$baBenchStart = microtime(true);
+	
+	//Convert to seconds
+	$baCacheTime *= 60;
+
+	$baURL = md5(str_ireplace('www.', '', $_SERVER['HTTP_HOST']).$_SERVER['REQUEST_URI']);
+	define('baURL', $baURL);
+	
+	if ($baCacheGzip == '2') { ini_set("zlib.output_compression", "On"); } elseif ($baCacheGzip == '1') { ob_start("ob_gzhandler"); } 
+
+	if (!session_id()) {
+		ini_set('session.use_cookies', 'On');
+		ini_set('session.use_trans_sid', 'Off');
+		
+		session_set_cookie_params(0, '/');
+		session_start();
+	}
+	if (!empty($_SESSION['customer_id']) ||
+		!empty($_SESSION['user_id']) ||
+		!empty($_SESSION['cart']) ||
+		!empty($_SESSION['wish_list']) ||
+		!empty($_SESSION['compare']) ||
+		!empty($_SESSION['success']) ||
+		!empty($_SESSION['affiliate_id']) ||
+		!empty($_POST)) {
+	// Later
+	} else {
+			
+		if (!isset($_SESSION['language']) && !isset($_SESSION['currency'])) {
+			if (isset($_COOKIE['language']) && isset($_COOKIE['currency'])) {
+				$baFileSearch = DIR_CACHE.md5($_COOKIE['language'].$_COOKIE['currency']).'-'.baURL.'*';
+			} else {
+				$baFileSearch = DIR_CACHE.md5('nothing').'-'.baURL.'*';
+			}
+		} else {
+			$baFileSearch = DIR_CACHE.@md5($_SESSION['language'].$_SESSION['currency']).'-'.baURL.'*';
+		}
+		$baSearchResult = glob($baFileSearch);
+
+		if ($baSearchResult) {
+			$baFile = $baSearchResult[0];
+			
+			if ($baCacheAlt == true) {
+				$baCacheRand = mt_rand(1,100);
+				if ($baCacheRand <= $baCacheProb) {
+					if (!headers_sent()) { header('Content-Type: text/html; charset=utf-8'); }
+					readfile($baFile);
+					$baBenchFinish = microtime(true);
+					$baBenchTime = round($baBenchFinish - $baBenchStart, 6);
+					if($baCacheLog == true) { echo "\n<!-- Cached execution time: $baBenchTime seconds (Probability)-->"; }
+					if ($baCacheGzip == '1') { ob_end_flush(); }
+					exit;
+				}  else {
+					$baFile = str_replace('*', '', $baFileSearch);
+					ob_start();
+					$baCaching = true;
+				}
+			} else {
+				if (time() - $baCacheTime < filemtime($baFile)) {
+					if (!headers_sent()) { header('Content-Type: text/html; charset=utf-8'); }
+					readfile($baFile);
+					$baBenchFinish = microtime(true);
+					$baBenchTime = round($baBenchFinish - $baBenchStart, 6);
+					if($baCacheLog == true) { echo "\n<!-- Cached execution time: $baBenchTime seconds -->"; }
+					if ($baCacheGzip == '1') { ob_end_flush(); }
+					exit;
+				} else {
+					$baFile = str_replace('*', '', $baFileSearch);
+					ob_start();
+					$baCaching = true;
+				}
+			}
+		} else {
+			$baFile = str_replace('*', '', $baFileSearch);
+			ob_start();
+			$baCaching = true;
+		}
+	}
+}
+]]></add>
+		</operation>
+	</file>
+	<file name="catalog/controller/product/product.php">
+		<operation>
+			<search position="after"><![CDATA[isset($this->request->get['product_id'])]]></search>
+			<add><![CDATA[define('baPRODUCT',$this->request->get['product_id']);]]></add>
+		</operation>
+	</file>
+	<file name="catalog/model/checkout/order.php">
+		<operation>
+			<search position="after"><![CDATA[($data['products'] as $product)]]></search>
+			<add><![CDATA[
+			$baSearchResult = glob(DIR_CACHE.'*.bac');
+			foreach (glob(DIR_CACHE.'*PROD-'.$product['product_id'].'*.bac') as $files) {
+				unlink($files);
+			}
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[$order_product_query->rows as $order_product]]></search>
+			<add><![CDATA[
+			$baSearchResult = glob(DIR_CACHE.'*.bac');
+			foreach (glob(DIR_CACHE.'*PROD-'.$order_product['product_id'].'*.bac') as $files) {
+				unlink($files);
+			}
+			]]></add>
+		</operation>
+	</file>
+	<file name="admin/model/catalog/product.php">
+		<operation>
+			<search position="after"><![CDATA[editProduct(]]></search>
+			<add><![CDATA[
+			$baSearchResult = glob(DIR_CACHE.'*.bac');
+			foreach (glob(DIR_CACHE.'*PROD-'.$product_id.'*.bac') as $files) {
+				unlink($files);
+			}
+			;]]></add>
+		</operation>
+	</file>
+	<file name="admin/controller/common/login.php">
+		<operation>
+			<search position="after"><![CDATA[$this->session->data['token'] = md5(mt_rand());]]></search>
+			<add><![CDATA[$this->session->data['baSQLCache'] = 'stop'; if (baCacheShowAdmin == true) { $this->session->data['baCacheAdmin'] = true; }]]></add>
+		</operation>
+	</file>
+	<file name="admin/controller/common/logout.php">
+		<operation>
+			<search position="after"><![CDATA[unset($this->session->data['token']);]]></search>
+			<add><![CDATA[unset($this->session->data['baSQLCache']);]]></add>
+		</operation>
+	</file>
+	<file name="catalog/controller/common/header.php">
+		<operation>
+			<search position="after"><![CDATA[protected function index() {]]></search>
+			<add><![CDATA[
+	if (isset($this->session->data['baCacheAdmin']) && $this->session->data['baCacheAdmin'] == true) {
+		$this->data['baCacheMsg'] = '';
+		$this->data['baCacheAdmin'] = true;
+		$baFileSearch = DIR_CACHE.md5($_SESSION['language'].$_SESSION['currency']).'-'.baURL.'*.bac';
+		$baSearchResult = glob($baFileSearch);
+		if ($baSearchResult) {
+			$baFile = $baSearchResult[0];		
+			$this->data['baCacheDate'] = 'Created: '.date("F j, Y, g:i a",filemtime($baFile));
+		} else {
+			$this->data['baCacheDate'] = 'This page is not cached';
+		}
+		if (isset($this->request->post['baCacheDelA'])) {
+			foreach (glob(DIR_CACHE."*.bac") as $files) {
+				unlink($files);
+			}
+			$this->data['baCacheMsg'] = '<div class="success">Cache deleted</div>';
+		} elseif (isset($this->request->post['baCacheDelS']) && isset($this->request->post['baCacheDelT'])) {
+			switch ($this->request->post['baCacheDelTM']) {
+				case "mins":
+					$baTime = intval($this->request->post['baCacheDelT'])*60;
+					break;
+				case "hrs":
+					$baTime = intval($this->request->post['baCacheDelT'])*60*60;
+					break;
+				case "dys":
+					$baTime = intval($this->request->post['baCacheDelT'])*60*60*24;
+					break;
+				case "wks":
+					$baTime = intval($this->request->post['baCacheDelT'])*60*60*24*7;
+					break;
+			}
+			foreach (glob(DIR_CACHE."*.bac") as $files) {
+				if (time() - $baTime < filemtime($files)) {
+					unlink($files);
+				}
+			}
+			$this->data['baCacheMsg'] = '<div class="success">Cache deleted</div>';
+		} elseif (isset($this->request->post['baCacheDelL'])) {
+			foreach (glob(DIR_CACHE."*".md5(baURL."*")) as $files) {
+				unlink($files);
+			}
+			$this->data['baCacheMsg'] = '<div class="success">Cache deleted</div>';
+		}
+	}
+	]]></add>
+		</operation>
+	</file>	
+	<file name="catalog/view/theme/*/template/common/header.tpl">
+		<operation>
+			<search position="after"><![CDATA[<body]]></search>
+			<add><![CDATA[<?php if (isset($this->session->data['baCacheAdmin']) && $this->session->data['baCacheAdmin'] == true) { 	
+?>
+<style>
+.panel {
+	position: fixed;
+	top: 50px;
+	left: 0;
+	display: none;
+	background: #000;
+	border:1px solid #111;
+	-moz-border-radius-topright: 20px;
+	-webkit-border-top-right-radius: 20px;
+	-moz-border-radius-bottomright: 20px;
+	-webkit-border-bottom-right-radius: 20px;
+	border-top-right-radius: 20px;
+	border-bottom-right-radius: 20px;
+	width: 300px;
+	height: auto;
+	padding: 30px;
+	color: #ccc;
+	filter: alpha(opacity=85);
+	opacity: .85;
+	z-index: 999;
+}
+.panel p{
+	margin: 0 0 15px 0;
+	padding: 0;
+	color: #ccc;
+}
+a.trigger{
+	position: fixed;
+	text-decoration: none;
+	top: 30px; left: 0;
+	font-size: 16px;
+	color:#fff;
+	padding: 10px 20px 10px 20px;
+	background:#333;
+	border:1px solid #444;
+	-moz-border-radius-topright: 20px;
+	-webkit-border-top-right-radius: 20px;
+	-moz-border-radius-bottomright: 20px;
+	-webkit-border-bottom-right-radius: 20px;
+	border-bottom-right-radius: 20px;
+	border-top-right-radius: 20px;
+	-moz-border-radius-bottomleft: 0px;
+	-webkit-border-bottom-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	
+	display: block;
+	z-index:1000;
+}
+a.trigger:hover{
+	position: fixed;
+	text-decoration: none;
+	top: 30px; left: 0;
+	font-size: 16px;
+	color:#fff;
+	padding: 10px 20px 10px 30px;
+	background:#222
+	border:1px solid #444;
+	-moz-border-radius-topright: 20px;
+	-webkit-border-top-right-radius: 20px;
+	-moz-border-radius-bottomright: 20px;
+	-webkit-border-bottom-right-radius: 20px;
+	border-bottom-right-radius: 20px;
+	border-top-right-radius: 20px;
+	-moz-border-radius-bottomleft: 0px;
+	-webkit-border-bottom-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	display: block;
+	z-index:1000;
+}
+a.active.trigger {
+	background:#330000 url('catalog/view/theme/default/image/remove.png') 0 13px no-repeat;
+	z-index:1000;
+}
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".trigger").click(function(){
+		$(".panel").toggle("fast");
+		$(this).toggleClass("active");
+		return false;
+	});
+});</script>
+
+<div class="panel">
+	<form action="" method="post">
+	<?php echo $baCacheMsg; ?>
+	<h3>Current Page Cache</h3>
+	<p><?php echo $baCacheDate; ?><br /><p><input type="submit" value="Update page cache" name="baCacheDelL"></p></p>
+	<p><em>Based on current currency and language. Updating a cache will affect all currency and language variaitons.</em><p>
+	<h3>Site-wide Cache</h3>
+	<p>Update caches older than <input type="text" size="3" name="baCacheDelT" /> <select name="baCacheDelTM"><option value="mins">Minutes</option><option value="hrs">Hours</option><option value="dys" selected="selected">Days</option><option value="wks">Weeks</option></select> <input type="submit" value="Go" name="baCacheDelS"></p>
+	<p>or <input type="submit" value="Update all caches" name="baCacheDelA"></p>
+	</form>
+	
+<div style="clear:both;"></div>
+</div>
+<a class="trigger" href="#">Cache Manager</a>
+<?php
+} ?>]]></add>
+		</operation>
+	</file>	
+	<file name="index.php">
+		<operation>
+			<search position="bottom"></search>
+			<add><![CDATA[
+//Output Cache
+if (isset($baCaching)) {
+	$baBenchFinish = microtime(true);
+	$baBenchTime = round($baBenchFinish - $baBenchStart, 6);
+	if($baCacheLog == true) { echo "\n<!-- Uncached execution time: ".$baBenchTime.' seconds. Cached on '.date("F j, Y, g:i a").' -->'; }
+	if (defined('baCATALOG')) { $baFile = $baFile.'CAT-'.baCATALOG.'.bac'; }
+	elseif (defined('baPRODUCT')) { $baFile = $baFile.'PROD-'.baPRODUCT.'.bac'; }
+	else { $baFile = $baFile.'.bac'; }
+	$baFW = fopen($baFile, 'w');
+	fwrite($baFW, ob_get_contents());
+	fclose($baFW); 
+	ob_end_flush(); 
+	if ($baCacheGzip == '1') { ob_end_flush(); }
+}]]></add>
+		</operation>
+	</file>
+</modification>

@@ -1,0 +1,217 @@
+<modification>
+    <id>OpenCart gift for OpenCart1.5.6</id>
+    <version>1.4.x and 1.5.x</version>
+    <vqmver>2.X</vqmver>
+    <author>TrickMyIdea (info@trickmyidea.com / trickmyidea@gmail.com) </author>
+    <file name="catalog/controller/checkout/cart.php">
+		<operation>
+			<search position="after"><![CDATA[ 
+			$this->data['checkout_buttons'] = array();
+			]]></search>
+			<add><![CDATA[
+			if(isset($this->session->data['giftInfo']['from'])){
+				$this->data['from'] = $this->session->data['giftInfo']['from'];
+			}else{
+				$this->data['from'] = "";
+			}
+			$this->data['gift_pop'] = $this->url->link('checkout/tmiGift'); ]]>
+			
+			</add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/checkout/confirm.php">
+		<operation>
+			<search position="after"><![CDATA[ 
+			$this->session->data['order_id'] = $this->model_checkout_order->addOrder($data);
+			]]></search>
+			<add><![CDATA[
+			$this->load->model('checkout/tmiGift');
+			$this->model_checkout_tmiGift->saveGiftinfo($this->session->data['giftInfo'], $this->session->data['order_id']); ]]>
+			
+			</add>
+		</operation>
+	</file>
+	
+	 <file name="catalog/controller/checkout/success.php">
+		<operation>
+			<search position="after"><![CDATA[ 
+			unset($this->session->data['vouchers']);
+			]]></search>
+			<add><![CDATA[
+			unset($this->session->data['giftInfo']); ]]>
+			
+			</add>
+		</operation>
+	</file>
+	
+	<file name="catalog/view/theme/thebabyshop/template/checkout/cart.tpl">
+		<operation error="skip">
+			<search position="after" offset="1"><![CDATA[
+				<div class="cart-module">
+			]]></search>
+			<add><![CDATA[
+                        <div style="height:30px;font-size:18px;color:#74889D;"><b>GIFT ORDER</b></div>
+                        <div style="float:left;width:20px;line-height:20px;margin-top:20px;">
+                            
+                        <script type="text/javascript">
+                            function giftwrap_popup(){jQuery.colorbox({width:"640px", height:"460px", opacity:0.4,fixed:true,iframe: true,href:"<?php echo $gift_pop; ?>"});}
+                        </script>
+                            <a onclick="giftwrap_popup(); return false;">
+                                <input type="checkbox" <?php if ($from != ""){?> checked="checked"<?php }?> id="isgift">
+                            </a>
+                        </div>
+                        <div style="float:left;width:160px;margin-top:20px;padding-left:0;">
+                            <span style="line-height:16px;">I would like to have my order gift wrapped.</span>
+                            <?php if ($from != ""){?><br /><a href="<?php echo $gift_pop; ?>" id="giftBox" class="iframe">Edit</a> <?php }?>
+                        </div>
+                        <div style="float:right">
+                            <img style="float:right" src="catalog/view/theme/thebabyshop/image/giftwrap.png" />
+                       </div>
+                       <div style="clear:both"></div>
+                        </div>
+			]]></add>		
+		</operation>			
+
+	</file>
+	
+	
+	<file name="admin/controller/sale/order.php">
+		<operation>
+			<search position="after"><![CDATA[ 
+			$this->data['tab_fraud'] = $this->language->get('tab_fraud');
+			]]></search>
+			<add><![CDATA[
+			$this->data['tab_gift'] = $this->language->get('tab_gift');
+			$this->data['text_from'] = $this->language->get('text_from');
+			$this->data['text_message'] = $this->language->get('text_message');
+			]]>
+			
+			</add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[ 
+			if($this->hasAction('payment/' . $order_info['payment_code'] . '/orderAction') == true){
+			]]></search>
+			<add><![CDATA[
+			$this->load->model('sale/tmiGift');
+			$this->data['giftInfo'] = $this->model_sale_tmiGift->getGiftInfo($this->request->get['order_id']);
+			]]>
+			
+			</add>
+		</operation>
+		
+		<operation>
+			<search position="after"><![CDATA[ 
+			$this->data['tab_total'] = $this->language->get('tab_total');
+			]]></search>
+			<add><![CDATA[
+			$this->data['tab_gift'] = $this->language->get('tab_gift');
+		$this->data['text_from'] = $this->language->get('text_from');
+		$this->data['text_message'] = $this->language->get('text_message');
+			]]>
+			
+			</add>
+		</operation>
+		
+		<operation>
+			<search position="before"><![CDATA[ 
+			$this->template = 'sale/order_form.tpl';
+			]]></search>
+			<add><![CDATA[
+			$this->load->model('sale/tmiGift');
+		$this->data['giftInfo'] = $this->model_sale_tmiGift->getGiftInfo($this->request->get['order_id']);
+			]]>
+			
+			</add>
+		</operation>
+	</file>
+	
+	<file name="admin/language/english/sale/order.php">
+		<operation>
+		  <search position="after" regex="true" index="1"><![CDATA[ 
+			~.*\['heading_title'\].*~ 
+			]]></search>
+			<add><![CDATA[
+$_['tab_gift']                      = 'Gift Order';
+$_['text_from']                     = 'From:';
+$_['text_message']                  = 'Message:'; ]]>
+			</add>
+		</operation>
+	</file>	
+	
+	<file name="admin/model/sale/order.php">
+		<operation error="skip">
+			<search position="after"><![CDATA[$this->db->query("DELETE FROM " . DB_PREFIX . "affiliate_transaction WHERE order_id = '" . (int)$order_id . "'");]]></search>
+			<add><![CDATA[			
+			$this->db->query("DELETE FROM " . DB_PREFIX . "order_gift WHERE order_id = '" . (int)$order_id . "'");
+			]]></add>		
+		</operation>			
+
+	</file>
+	
+	<file name="admin/view/template/sale/order_info.tpl">
+		<operation error="skip">
+			<search position="after"><![CDATA[<a href="#tab-product"><?php echo $tab_product; ?></a><a href="#tab-history"><?php echo $tab_history; ?></a>]]></search>
+			<add><![CDATA[			
+         <?php if ($giftInfo) { ?>
+        <a href="#tab-gift"><?php echo $tab_gift; ?></a>
+         <?php } ?>
+			]]></add>		
+		</operation>
+		
+		<operation error="skip">
+			<search position="before" index="2"><![CDATA[<?php if ($maxmind_id) { ?>]]></search>
+			<add><![CDATA[		
+         <?php if ($giftInfo) { ?>
+      <div id="tab-gift" class="vtabs-content">
+      	 <table class="form">
+            <tr>
+              <td><?php echo $text_from; ?></td>
+              <td><?php echo $giftInfo['gift_from']; ?></td>
+            </tr>
+            <tr>
+              <td><?php echo $text_message; ?></td>
+              <td><?php echo $giftInfo['gift_text']; ?></td>
+            </tr>
+           
+        </table>
+      </div>
+      <?php }?>
+			]]></add>		
+		</operation>			
+
+	</file>
+	
+	<file name="admin/view/template/sale/order_form.tpl">
+		<operation error="skip">
+			<search position="replace"><![CDATA[<div id="vtabs" class="vtabs"><a href="#tab-customer"><?php echo $tab_customer; ?></a><a href="#tab-payment"><?php echo $tab_payment; ?></a><a href="#tab-shipping"><?php echo $tab_shipping; ?></a><a href="#tab-product"><?php echo $tab_product; ?></a><a href="#tab-voucher"><?php echo $tab_voucher; ?></a><a href="#tab-total"><?php echo $tab_total; ?></a></div>]]></search>
+			<add><![CDATA[			
+         <div id="vtabs" class="vtabs"><a href="#tab-customer"><?php echo $tab_customer; ?></a><a href="#tab-payment"><?php echo $tab_payment; ?></a><a href="#tab-shipping"><?php echo $tab_shipping; ?></a><a href="#tab-product"><?php echo $tab_product; ?></a><a href="#tab-voucher"><?php echo $tab_voucher; ?></a><a href="#tab-total"><?php echo $tab_total; ?></a><?php if ($giftInfo) { ?><a href="#tab-gift"><?php echo $tab_gift; ?></a><?php } ?></div>
+			]]></add>		
+		</operation>
+		
+		<operation error="skip">
+			<search position="before"><![CDATA[</form>]]></search>
+			<add><![CDATA[			
+          <?php  if ($giftInfo) { ?>
+      <div id="tab-gift" class="vtabs-content">
+      	 <table class="form">
+      	 
+            <tr>
+              <td><?php echo $text_from; ?></td>
+              <td><input type="text" name="from" style="width: 98%;" value="<?php echo $giftInfo['gift_from']; ?>" /></td>
+            </tr>
+            <tr>
+              <td><?php echo $text_message; ?></td>
+              <td><textarea name="message" rows="8" style="width: 98%;" ><?php echo $giftInfo['gift_text']; ?></textarea></td>
+            </tr>
+           
+        </table>
+      </div>
+      <?php } ?>
+			]]></add>		
+		</operation>			
+
+	</file>
+</modification>

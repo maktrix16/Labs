@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+        <id>Madrillapp integration</id>
+        <version>1.5.1</version>
+        <vqmver>2.3.2</vqmver>
+        <author>rendygunardi.com</author>
+        <file name="admin/controller/setting/setting.php">
+               <operation info="After $this->data['text_smtp'] add  $this->data['text_mandrill']">
+                        <search position="after"><![CDATA[
+                        $this->data['text_smtp'] = $this->language->get('text_smtp');
+                        ]]></search>
+                        <add><![CDATA[
+                        $this->data['text_mandrill'] = "Mandrillapp";
+                        ]]></add>
+                </operation>
+				
+				<operation info="add">
+                        <search position="before"><![CDATA[
+                        if (isset($this->request->post['config_mail_parameter'])) {
+                        ]]></search>
+                        <add><![CDATA[
+                        if (isset($this->request->post['config_mail_madrill_api'])) {
+							$this->data['config_mail_madrill_api'] = $this->request->post['config_mail_madrill_api'];
+						} else {
+							$this->data['config_mail_madrill_api'] = $this->config->get('config_mail_madrill_api');
+						}
+                        ]]></add>
+                </operation>
+				
+				<operation info="add">
+                        <search position="before"><![CDATA[
+                        if (!$this->error) {
+                        ]]></search>
+                        <add><![CDATA[
+                        if ( substr($this->request->post['config_mail_protocol'], 0, 8)== 'mandrill' && $this->request->post['config_mail_madrill_api']=="" ) {
+							$this->error['warning'] = "Madrillapp API Key Required";
+						}						
+                        ]]></add>
+                </operation>
+				
+				<operation info="add">
+                        <search position="before"><![CDATA[
+                        $this->model_setting_setting->editSetting('config', $this->request->post);
+                        ]]></search>
+                        <add><![CDATA[
+                        if ( substr($this->request->post['config_mail_protocol'], 0, 8)== 'mandrill' && $this->request->post['config_mail_madrill_api']!="" ) {
+							$this->request->post['config_mail_madrill_api']=trim($this->request->post['config_mail_madrill_api']);
+							$this->request->post['config_mail_protocol']="mandrill".$this->request->post['config_mail_madrill_api'];														
+						}
+                        ]]></add>
+                </operation>
+				
+
+        </file>
+		
+		 <file name="admin/view/template/setting/setting.tpl">
+               <operation info="add madrill option">
+                        <search position="after"><![CDATA[
+                        <option value="smtp"><?php echo $text_smtp; ?></option>                  		
+                        ]]></search>
+                        <add><![CDATA[
+                        <?php } ?>
+						<?php if (substr($config_mail_protocol, 0, 8) == 'mandrill') { ?>
+						<option value="mandrill" selected="selected"><?php echo $text_mandrill; ?></option>
+						<?php } else { ?>
+						<option value="mandrill"><?php echo $text_mandrill; ?></option>						
+                        ]]></add>
+                </operation>
+				
+				<operation info="add madrill api field">
+                        <search position="before"><![CDATA[
+                        <td><?php echo $entry_smtp_host; ?></td>                  		
+                        ]]></search>
+                        <add><![CDATA[                        
+						  <td>
+						  		Mandrillapp API Key:
+								<span class="help">Mandrill is a new way for apps to send transactional email. It runs on the delivery infrastructure that powers MailChimp. If you don't have a API key you can sign up <a href="http://mandrill.com/" target="_blank">here</a>. Once you have obtained a key copy and paste it into the field.</span></td>
+						  <td><input type="text" name="config_mail_madrill_api" value="<?php echo $config_mail_madrill_api; ?>" /></td>
+						</tr>
+						<tr>
+                        ]]></add>
+                </operation>
+        </file>
+		
+		
+		
+		 <file name="system/library/mail.php">
+				<operation info="add madrill include">
+                        <search position="after"><![CDATA[
+                        <?php                  		
+                        ]]></search>
+                        <add><![CDATA[  
+						                      
+						require_once DIR_SYSTEM . 'library/Mandrill.php';
+                        ]]></add>
+                </operation>
+				
+				<operation info="add madrill include">
+                        <search position="before"><![CDATA[
+                        public $parameter = '';
+                        ]]></search>
+                        <add><![CDATA[                        
+						public $madrill_api = '';
+                        ]]></add>
+                </operation>
+				
+				
+				<operation info="add madrill code">
+                        <search position="before"><![CDATA[
+                        } elseif ($this->protocol == 'smtp') {
+                        ]]></search>
+                        <add><![CDATA[                        
+						} elseif (substr($this->protocol, 0, 8) == 'mandrill') {
+						$key=substr($this->protocol, 8);
+						$master= new Mandrill($key);					
+						$mail = new Mandrill_Messages($master);
+						
+						$extos=explode(",",$to);
+						$tto=array();
+						foreach($extos as $tos){
+							$tto[]=array('email'=>$tos);
+						}
+						
+						if (!$this->html) {
+							$msg= array(
+								'text' => $this->text,
+								'subject' => $this->subject,
+								'from_email' => $this->from,
+						        'from_name' => $this->sender,								
+								'to' => $tto								
+							);			
+						} else {
+							$msg= array(
+								'html' => $this->html,
+								'subject' => $this->subject,
+								'from_email' => $this->from,
+						        'from_name' => $this->sender,								
+								'to' => $tto								
+							
+							);
+						}
+						
+						$mail->send($msg);
+						
+                        ]]></add>
+                </operation>
+				
+        </file>
+
+		
+</modification>

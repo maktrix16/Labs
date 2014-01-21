@@ -1,0 +1,72 @@
+<modification>
+    <id>OpenCart Affiliate Banner for OpenCart v.1.5.5.1</id>
+    <version>1.4.x and 1.5.x</version>
+    <vqmver>2.X</vqmver>
+    <author>TrickMyIdea (info@trickmyidea.com / trickmyidea@gmail.com) </author>		
+	
+<!-- 	*********************************************************
+			Common
+		********************************************************* 
+-->
+
+	<file name="catalog/controller/affiliate/account.php">
+		<operation>
+			<search position="after"><![CDATA[ 
+			$this->data['text_transaction'] = $this->language->get('text_transaction');
+			]]></search>
+			<add><![CDATA[
+			$affiliate_module = $this->config->get('affiliate_banner_module');
+			$this->data['banner_status'] = $affiliate_module[0]['status'];
+			$this->data['banner_position'] = $affiliate_module[0]['position'];
+			if($affiliate_module[0]['status'] == 1){
+				$this->data['text_banner'] = $this->language->get('text_banner');
+				$this->data['text_my_banner'] = $this->language->get('text_my_banner');
+				$this->data['banner'] = $this->url->link('affiliate/affiliate_banner', '', 'SSL'); ]]>
+			}
+			</add>
+		</operation>
+		
+		
+	</file>
+	
+	<file name="catalog/language/english/affiliate/account.php">
+		<operation>
+		  <search position="after" regex="true" index="1"><![CDATA[ 
+			~.*\['text_transaction'\].*~ 
+			]]></search>
+			<add><![CDATA[
+			$_['text_banner'] = ' View Affiliate Banners';
+			$_['text_my_banner'] = 'Affiliate Banners'; ]]>
+			</add>
+		</operation>
+		
+					
+	</file>	
+	
+	<file name="catalog/view/theme/default/template/affiliate/account.tpl">
+		<operation error="skip">
+		  <?php if($banner_status == "content_top"){ ?>
+			<search position="before"><![CDATA[<?php echo $content_bottom; ?>]]></search>
+			  <?php }elseif($banner_status == "content_bottom"){?>
+			<search position="before"><![CDATA[<?php echo $content_bottom; ?>]]></search>
+			<?php } ?>
+		    
+			
+			<add><![CDATA[			
+			<?php if($banner_status == 1){ ?>
+			<h2><?php echo $text_my_banner; ?></h2>
+			<div class="content">
+			<ul>
+			<li><a href="<?php echo $banner; ?>"><?php echo $text_banner; ?></a></li>
+			</ul>
+			</div>	
+			<?php } ?> 
+			]]></add>		
+		</operation>			
+
+	</file>
+	
+	
+	
+	<!-- 	** END ********************************************** -->
+</modification>
