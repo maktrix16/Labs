@@ -579,7 +579,7 @@ if($this->config->get('thebabyshop_body_font')!='' || $this->config->get('thebab
 
 <section id="leaderboard">
 <script type="text/javascript">
-    function free_shipping_popup(){jQuery.colorbox({width:"640px", height:"460px", opacity:0.4,fixed:true,iframe: true,href:"map_en.php"});}
+    function free_shipping_popup(){jQuery.colorbox({width:"744px", height:"466px", opacity:0.4,fixed:true,iframe: true,href:"map_en.php"});}
 </script>
 <a onclick="free_shipping_popup(); return false;"><?php echo $text_free_shipping_gift; ?></a>
 </section>
