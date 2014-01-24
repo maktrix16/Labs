@@ -1,4 +1,4 @@
 <?php
-adsfgfhgfjfjhf
+asdg
 phpinfo();
 ?>
