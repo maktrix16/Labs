@@ -1,5 +1,5 @@
 <div id="currency" class="dropdown_l">
-<div class="selected_l">HK$</div>
+<!--<div class="selected_l">HK$</div> -->
 </div>
 <?php if (count($currencies) > 1) { ?>
 <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data">
@@ -8,7 +8,7 @@
       <div class="selected_l"><?php echo $this->currency->getSymbolLeft(); ?></div>
     <ul class="options_l"><?php foreach ($currencies as $currency) { ?>
       <li>
-      <a title="<?php echo $currency['title']; ?>" onclick="$('input[name=\'currency_code\']').attr('value', '<?php echo $currency['code']; ?>').submit(); $(this).parent().parent().parent().parent().submit();"><?php echo $currency['symbol_left']; ?></a>
+      <a title="<?php echo $currency['title']; ?>" onclick="$('input[name=\'currency_code\']').attr('value', '<?php echo $currency['code']; ?>').submit(); $(this).parent().parent().parent().parent().submit();"><?php echo $currency['symbol_left']; ?> (<?php echo $currency['title']; ?>)</a>
       </li><?php } ?>
     </ul>
     <input type="hidden" name="currency_code" value="" />

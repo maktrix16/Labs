@@ -19,12 +19,12 @@ class ModelLocalisationCurrency extends Model {
         			'currency_id'   => $result['currency_id'],
         			'title'         => $result['title'],
         			'code'          => $result['code'],
-					'symbol_left'   => $result['symbol_left'],
-					'symbol_right'  => $result['symbol_right'],
-					'decimal_place' => $result['decimal_place'],
-					'value'         => $result['value'],
-					'status'        => $result['status'],
-					'date_modified' => $result['date_modified']
+				'symbol_left'   => $result['symbol_left'],
+				'symbol_right'  => $result['symbol_right'],
+				'decimal_place' => $result['decimal_place'],
+				'value'         => $result['value'],
+				'status'        => $result['status'],
+				'date_modified' => $result['date_modified']
       			);
     		}	
 			

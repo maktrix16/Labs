@@ -320,7 +320,7 @@ class ControllerCommonHeader extends Controller {
 		
     	
     	
-    	if (isset($this->request->post['currency_code'])) {
+   	if (isset($this->request->post['currency_code'])) {
       		$this->currency->set($this->request->post['currency_code']);
 			
 			unset($this->session->data['shipping_method']);
@@ -331,7 +331,7 @@ class ControllerCommonHeader extends Controller {
 			} else {
 				$this->redirect($this->url->link('common/home'));
 			}
-   		}
+   		} 
 		
 		$this->language->load('module/currency');
 		
@@ -377,7 +377,7 @@ class ControllerCommonHeader extends Controller {
 		} else {
 			$this->template = 'default/template/common/country.tpl';
 		}
-		
+
     	$this->response->setOutput($this->render());
     	
 	}
