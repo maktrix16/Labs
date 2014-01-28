@@ -1,0 +1,75 @@
+<modification>
+	<id>Smart Popup Login</id>
+	<version>For OpenCart 1.5.x</version>
+	<vqmver>2.0.0</vqmver>
+	<author>Xtensions</author>
+	<file name="catalog/language/*/common/header.php">
+		<operation error="skip">
+			<search position="replace" index="1"><![CDATA[
+				'Welcome visitor you can <a href="%s">login</a> or <a href="%s">create an account</a>.';
+			]]></search>
+			<add><![CDATA[
+				'Welcome visitor you can <a href="%s" id="popuplogin">Login / Register</a>';
+			]]></add>
+		</operation>
+	</file>
+	<file name="catalog/controller/common/header.php">
+		
+		<operation error="skip">
+			<search position="after"><![CDATA[
+				protected function index() {
+			]]></search>
+			<add><![CDATA[
+				$this->document->addScript('catalog/view/javascript/fancyboxes/jquery.fancybox-1.3.4.js');
+				$this->document->addStyle('catalog/view/javascript/fancyboxes/jquery.fancybox-1.3.4.css');
+			]]></add>
+		</operation>
+		<operation error="skip">
+		<search position="replace"><![CDATA[
+		sprintf($this->language->get('text_welcome'), $this->url->link('account/login', '', 'SSL'), $this->url->link('account/register', '', 'SSL'));
+		]]></search>
+		<add><![CDATA[
+		sprintf($this->language->get('text_welcome'), $this->url->link('account/popuplogin', '', 'SSL'));
+		]]></add>
+		</operation>
+	</file>
+	<file name="catalog/view/theme/*/template/common/footer.tpl">
+		<operation error="skip">
+			<search position="before"><![CDATA[
+				</body>
+			]]></search>
+			<add><![CDATA[
+				<script type="text/javascript"><!--
+				$('#popuplogin').fancybox({					
+					'type': 'ajax',
+					'ajax': {
+						dataFilter: function(data) {
+							return $(data);
+						}
+					}
+				});
+				//--></script>
+				
+				
+				
+				<style type="text/css">
+#fancybox-content {
+ border-color: #EBECF1; /* or whatever */
+ background-color: #EBECF1; /* or whatever */
+ 
+}
+.tab-content {
+ 
+ background-color: #FFFFFF; /* or whatever */
+ 
+}
+#fancybox-wrap {
+  position: absolute;
+  top: 20px !important;
+}
+  
+</style>
+			]]></add>
+		</operation>
+	</file>
+</modification>
