@@ -122,13 +122,18 @@ if($this->config->get('thebabyshop_body_font')!='' || $this->config->get('thebab
   <?php } ?>
   <div id="lc_dropdown"><?php echo $language; ?><?php echo $currency; ?></div>
     <div class="links"> 
+        
     <?php if (!$logged) { ?>
     <script type="text/javascript">
-        function login_popup(){jQuery.colorbox({width:"500px",height:"290px",opacity:0.4,fixed:true,href:"index.php?route=account/login_popup"});return false;}
-        function register_popup(){jQuery.colorbox({width:"600px",height:"420px",opacity:0.4,fixed:true,href:"index.php?route=account/register_popup"});return false;}
+    //    function login_popup(){jQuery.colorbox({width:"500px",height:"290px",opacity:0.4,fixed:true,href:"index.php?route=account/login_popup"});return false;}
+    //    function register_popup(){jQuery.colorbox({width:"600px",height:"420px",opacity:0.4,fixed:true,href:"index.php?route=account/register_popup"});return false;}
+        function login_popup(){jQuery.colorbox({width:"600px",height:"400px",opacity:0.4,fixed:true,href:"index.php?route=account/popuplogin#tab-Login"});return false;}
+        function register_popup(){jQuery.colorbox({width:"600px",height:"400px",opacity:0.4,fixed:true,href:"index.php?route=account/popuplogin#tab-Register"});return false;}
     </script>
     <a onclick="login_popup();return false;" href="login"><?php echo $text_login_s; ?></a>
-    <a onclick="register_popup();return false;" href="register"><?php echo $text_register; ?></a>
+    <a onclick="register_popup();return false;" href="register"><?php echo $text_register; ?></a>    
+  <!--  <a id="popuplogin" href="index.php?route=account/popuplogin#tab-Login"><?php echo $text_login_s; ?></a>
+    <a id="popuplogin" href="index.php?route=account/popuplogin#tab-Register"><?php echo $text_register; ?></a> -->
     <?php } else { ?>
     <?php echo $text_logged_s; ?>
     <a href="<?php echo $wishlist; ?>" id="wishlist-total"><?php echo $text_wishlist; ?></a>

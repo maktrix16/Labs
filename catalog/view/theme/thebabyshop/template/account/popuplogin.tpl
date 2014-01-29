@@ -1,19 +1,14 @@
 <?php echo $pheader; ?>
-<div id="container">
+<div > <!-- id="container" -->
 
-<div id="content">
+<div style="width:600px;" > <!-- id="content" -->
   
   
    <div id="tabs" class="htabs">
-   <a href="#tab-Login">Login</a>
-    
-   
-   
-    <a href="#tab-Register" class="register">Register</a>
-    
-    
+        <a href="#tab-Login">Login</a>
+        <a href="#tab-Register" class="register">Register</a>
   </div>
-  <div id="tab-Login" class="tab-content">
+  <div id="tab-Login" > <!-- class="tab-content" -->
     <div id="checkout">
       
       <div class="checkout-content"></div>
@@ -25,8 +20,7 @@
       <div class="checkout-content"></div>
     </div>
     </div>
-     
-      </div>
+  </div>
     
    
     
@@ -121,7 +115,7 @@ $('#button-register').live('click', function() {
 				if (json['error']['email']) {
 					$('#payment-address input[name=\'email\'] + br').after('<span class="error">' + json['error']['email'] + '</span>');
 				}
-				
+/*				
 				if (json['error']['telephone']) {
 					$('#payment-address input[name=\'telephone\'] + br').after('<span class="error">' + json['error']['telephone'] + '</span>');
 				}	
@@ -153,7 +147,7 @@ $('#button-register').live('click', function() {
 				if (json['error']['zone']) {
 					$('#payment-address select[name=\'zone_id\'] + br').after('<span class="error">' + json['error']['zone'] + '</span>');
 				}
-				
+*/				
 				if (json['error']['password']) {
 					$('#payment-address input[name=\'password\'] + br').after('<span class="error">' + json['error']['password'] + '</span>');
 				}	

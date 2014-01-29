@@ -16,7 +16,7 @@
 <?php foreach ($links as $link) { ?>
 <link href="<?php echo $link['href']; ?>" rel="<?php echo $link['rel']; ?>" />
 <?php } ?>
-<link rel="stylesheet" type="text/css" href="catalog/view/theme/default/stylesheet/stylesheet.css" />
+<link rel="stylesheet" type="text/css" href="catalog/view/theme/thebabyshop/stylesheet/stylesheet.css" />
 <?php foreach ($styles as $style) { ?>
 <link rel="<?php echo $style['rel']; ?>" type="text/css" href="<?php echo $style['href']; ?>" media="<?php echo $style['media']; ?>" />
 <?php } ?>
@@ -49,11 +49,11 @@ $('body').prepend('<iframe src="<?php echo $store; ?>" style="display: none;"></
 <?php echo $google_analytics; ?>
 </head>
 <body>
-<div id="container">
-<div id="header">
-  <?php if ($logo) { ?>
+<div style="width=600px; padding:10px;" > <!-- -->
+<!-- <div id="header">
+ <?php if ($logo) { ?>
   <div id="logo"><img src="<?php echo $logo; ?>" title="<?php echo $name; ?>" alt="<?php echo $name; ?> "/></div>
  
   <?php } ?>
-  </div>
+  </div>-->
 

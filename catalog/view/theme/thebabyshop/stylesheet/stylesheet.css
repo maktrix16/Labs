@@ -494,7 +494,7 @@ h1 a,h2 a,h3 a,h4 a,h5 a,h6 a,a:hover{text-decoration:none;}
 a img,.cart-info tbody .image img{border:none;}
 input,textarea,input:focus,textarea:focus{box-shadow:none;}
 input,textarea,select,.uneditable-input,.box-manufacturers-home > div.span2 > div.image,.box-manufacturers-home > div.span3 > div.image,#footer_cr p{margin-bottom:0;}
-.required,.cart-info tbody span.stock{color:#FD4040);}
+.required,.cart-info tbody span.stock{color:#FD4040;}
 table.form,.wishlist-info table,.checkout-product table{width:100%;border-collapse:collapse;margin-bottom:20px;}
 table.list,.compare-info{border-collapse:collapse;width:100%;margin-bottom:20px;}
 table.radio tr td:first-child,.mini-cart-info .image{width:1px;}

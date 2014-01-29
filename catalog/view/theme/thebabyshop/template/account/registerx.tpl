@@ -10,7 +10,7 @@
   <br />
   <span class="required">*</span> <?php echo $entry_email; ?><br />
   <input type="text" name="email" value="" class="large-field" />
-  <br />
+<!--  <br />
   <br />
   <span class="required">*</span> <?php echo $entry_telephone; ?><br />
   <input type="text" name="telephone" value="" class="large-field" />
@@ -19,7 +19,7 @@
   <?php echo $entry_fax; ?><br />
   <input type="text" name="fax" value="" class="large-field" />
   <br />
-  <br />
+  <br />-->
   <h2><?php echo $text_your_password; ?></h2>
   <span class="required">*</span> <?php echo $entry_password; ?><br />
   <input type="password" name="password" value="" class="large-field" />
@@ -31,6 +31,7 @@
   <br />
   <br />
 </div>
+<!--
 <div class="right">
   <h2><?php echo $text_your_address; ?></h2>
   <?php echo $entry_company; ?><br />
@@ -97,7 +98,7 @@
 <br />
 <br />
 <br />
-</div>
+</div> -->
 <div style="clear: both; padding-top: 15px; border-top: 1px solid #EEEEEE;">
   <input type="checkbox" name="newsletter" value="1" id="newsletter" />
   <label for="newsletter"><?php echo $entry_newsletter; ?></label>
