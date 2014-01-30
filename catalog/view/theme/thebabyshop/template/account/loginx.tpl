@@ -14,13 +14,13 @@
   <?php //echo $text_i_am_returning_customer; ?>
   
   <div style="height:25px; alignment-adjust: middle;">
-      <div style="float:left; width:100px; margin-right: 10px; text-align: left;"><?php echo $entry_email; ?><div>
-      <div style="float:left; width:400px; margin-right: 10px; text-align: left;"><input type="text" name="email" value="" /></div>
+      <div style="float:left; width:100px; margin-right: 10px; text-align: left; display:inline-block;"><?php echo $entry_email; ?><div>
+      <div style="float:left; width:400px; margin-right: 10px; text-align: left; display:inline-block;"><input type="text" name="email" value="" /></div>
   </div>
 <div style="clear:both";></div>
    <div style="height:25px; alignment-adjust: middle;">
-      <div style="float:left; width:100px; margin-right: 10px; text-align: left;"><?php echo $entry_password; ?></div>
-      <div style="float:left; width:400px; margin-right: 10px; text-align: left;"><input type="password" name="password" value="" /></div>
+      <div style="float:left; width:100px; margin-right: 10px; text-align: left; display:inline-block;"><?php echo $entry_password; ?></div>
+      <div style="float:left; width:400px; margin-right: 10px; text-align: left; display:inline-block;"><input type="password" name="password" value="" /></div>
   </div>
    
 

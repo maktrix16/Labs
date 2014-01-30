@@ -1,7 +1,7 @@
 <?php echo $pheader; ?>
 <div > <!-- id="container" -->
 
-<div style="width:580px;" > <!-- id="content" -->
+<div style="width:580px; padding:10px;" > <!-- id="content" -->
   
   
   <div id="tabs" class="htabs">
