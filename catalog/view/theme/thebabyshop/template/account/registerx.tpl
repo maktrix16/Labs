@@ -1,4 +1,4 @@
-<div class="left">
+<div style="width:500px;"> <!--  class="left" -->
   <h2><?php echo $text_your_details; ?></h2>
   <span class="required">*</span> <?php echo $entry_firstname; ?><br />
   <input type="text" name="firstname" value="" class="large-field" />

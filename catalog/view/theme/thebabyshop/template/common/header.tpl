@@ -128,7 +128,7 @@ if($this->config->get('thebabyshop_body_font')!='' || $this->config->get('thebab
     //    function login_popup(){jQuery.colorbox({width:"500px",height:"290px",opacity:0.4,fixed:true,href:"index.php?route=account/login_popup"});return false;}
     //    function register_popup(){jQuery.colorbox({width:"600px",height:"420px",opacity:0.4,fixed:true,href:"index.php?route=account/register_popup"});return false;}
         function login_popup(){jQuery.colorbox({width:"600px",height:"400px",opacity:0.4,fixed:true,href:"index.php?route=account/popuplogin#tab-Login"});return false;}
-        function register_popup(){jQuery.colorbox({width:"600px",height:"400px",opacity:0.4,fixed:true,href:"index.php?route=account/popuplogin#tab-Register"});return false;}
+        function register_popup(){jQuery.colorbox({width:"600px",height:"500px",opacity:0.4,fixed:true,href:"index.php?route=account/popuplogin#tab-Register"});return false;}
     </script>
     <a onclick="login_popup();return false;" href="login"><?php echo $text_login_s; ?></a>
     <a onclick="register_popup();return false;" href="register"><?php echo $text_register; ?></a>    

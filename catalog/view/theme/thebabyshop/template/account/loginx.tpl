@@ -9,7 +9,7 @@
   <br />
 </div>
 -->
-<div id="login" style="width:100%;" > <!--  class="right" class="popup-login" -->
+<div id="login" style="width:500px;" > <!--  class="right" class="popup-login" -->
   <h2><?php echo $heading_title; //$text_returning_customer; ?></h2>
   <?php //echo $text_i_am_returning_customer; ?>
   
