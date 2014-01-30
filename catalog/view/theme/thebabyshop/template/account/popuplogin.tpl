@@ -1,20 +1,20 @@
 <?php echo $pheader; ?>
 <div > <!-- id="container" -->
 
-<div style="width:600px;" > <!-- id="content" -->
+<div style="width:580px;" > <!-- id="content" -->
   
   
-   <div id="tabs" class="htabs">
+  <div id="tabs" class="htabs">
         <a href="#tab-Login">Login</a>
-        <a href="#tab-Register" class="register">Register</a>
+        <a href="#tab-Register">Register</a> <!-- class="register" -->
   </div>
-  <div id="tab-Login" > <!-- class="tab-content" -->
+  <div id="tab-Login" > <!--  class="tab-content" -->
     <div id="checkout">
       
       <div class="checkout-content"></div>
     </div>
     </div>
-    <div id="tab-Register" class="tab-content">
+    <div id="tab-Register" >  <!-- class="tab-content" -->
     <div id="payment-address">
      
       <div class="checkout-content"></div>

@@ -26,8 +26,8 @@
 
   <input type="button" value="<?php echo $button_login; ?>" id="button-login" class="button" />  <input type="button" value="Reset Password" id="reset" class="button"/><br />
   <br />
-   <a href='#tab-Register'><?php echo $text_register_account; ?></a>
-  
+  <a href='#tab-Register'><?php echo $text_register_account; ?></a>
+   
   <br />
   <input type="button" value="<?php echo $button_continue; ?>" id="button-account" class="button" />
 </div>

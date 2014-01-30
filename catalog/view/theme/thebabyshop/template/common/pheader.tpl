@@ -49,7 +49,7 @@ $('body').prepend('<iframe src="<?php echo $store; ?>" style="display: none;"></
 <?php echo $google_analytics; ?>
 </head>
 <body>
-<div style="width=600px; padding:10px;" > <!-- -->
+<div style="width=580px; padding:10px;" > <!-- -->
 <!-- <div id="header">
  <?php if ($logo) { ?>
   <div id="logo"><img src="<?php echo $logo; ?>" title="<?php echo $name; ?>" alt="<?php echo $name; ?> "/></div>

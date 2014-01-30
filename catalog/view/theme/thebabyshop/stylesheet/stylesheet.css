@@ -51,7 +51,8 @@ input.button-exclusive{margin:0;padding:10px 20px;}
 .buttons .left{float:left;text-align:left;}
 .buttons .center{text-align:center;margin-left:auto;margin-right:auto;}
 .htabs{height:37px;line-height:16px;}
-.htabs a{background:#DDD;float:left;font-size:15px;text-align:center;margin-right:-1px;display:none;padding:10px;width:102px;}
+.htabs a{background:#FFF;float:left;font-size:15px;text-align:center;margin-right:-1px;display:none;padding:10px;width:102px;}
+//.htabs a{background:#DDD;float:left;font-size:15px;text-align:center;margin-right:-1px;display:none;padding:10px;width:102px;}
 .tab-content{margin-bottom:0;z-index:2;overflow:auto;background-color:#FFF;line-height:24px;width:auto;padding:30px;}
 #tab-description ul li{list-style:disc!important;margin:0 0 0 10px;line-height:22px;}
 #tab-brand{padding:0 30px 28px;}
@@ -416,11 +417,11 @@ a.colorbox.cboxElement{text-decoration:underline!important;}
 #total td{text-align:left;padding:20px 0;}
 .Checkout #menu, .Checkout .links, .Checkout #cart, .Checkout #search, .Checkout #footer_promises, .Checkout #footer_connect{display:none!important;}
 .Checkout #lc_dropdown{right:0px!important;}
-.Checkout #content{min-height:600px;}
+.Checkout #content{min-height:580px;}
 .checkout-heading{background:#7AAED5;font-weight:700;font-size:13px;color:#FFF;margin-bottom:0;padding:8px;border-bottom:1px solid #FFF;}
 .checkout-heading a{float:right;margin-top:1px;font-weight:400;color:#FFF!important;}
-.checkout-content{display:none;overflow:auto;padding:15px 0;}
-.checkout-content h2{margin:15px 0 10px;}
+.checkout-content{display:none;overflow:auto;padding:10px 0;}
+.checkout-content h2{margin:10px 0 10px;}
 .checkout-product tfoot td{text-align:right;padding:5px 15px;color:#333!important;}
 .check-out.buttons{width:100%;margin:0;float:left;display:block;}
 .contact-info{overflow:auto;float:left;margin-left:0;width:47%;}
@@ -640,9 +641,10 @@ a.button,input.button,a.button-exclusive,input.button-exclusive{border-radius:0;
 div.menu-category-wall-sub-name,#menu_your_account h1,#menu_informations h1,#menu_custom_block h1,#menu_contacts h1{background-color:#3876A5!important;}
 #menu > ul > li > div,#menu-category-wall > ul > li > div,#menu > ul > li > div > ul > li > div,#menu_oc > ul > li > div,#menu_brands > ul > li > div,#menu_informations > ul > li > div,#menu_your_account > ul > li > div,#menu_custom_block > ul > li > div,#menu_contacts > ul > li > div{box-shadow:0 5px 10px rgba(0,0,0,0.3)!important;-webkit-box-shadow:0 5px 10px rgba(0,0,0,0.3)!important;-moz-box-shadow:0 5px 10px rgba(0,0,0,0.3)!important;}
 span.sale-icon{background-color:#EE3963!important;}
-.htabs{border-bottom:1px solid #7AAED5;}
-.htabs a{border-top:1px solid #7AAED5;border-left:1px solid #7AAED5;border-right:1px solid #7AAED5;}
-.htabs a.selected{background:#FFF;}
+.htabs{border:0px;} //border-bottom:1px solid #7AAED5;
+// .htabs a{border-top:1px solid #7AAED5; border-left:1px solid #7AAED5; border-right:1px solid #7AAED5;}
+.htabs a{border:0px;} //border-bottom: 1px solid #7AAED5;
+.htabs a.selected{background:#FFF; color:#7AAED5;}
 .tab-content{border-bottom:1px solid #7AAED5;border-left:1px solid #7AAED5;border-right:1px solid #7AAED5;height:248px!important;overflow:hidden;}
 .ei-title h2 a{color:#545454;}
 .ei-title h4 a{color:#EE3963;}

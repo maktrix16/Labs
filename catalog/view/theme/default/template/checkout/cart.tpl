@@ -300,7 +300,7 @@ $('#button-quote').live('click', function() {
 				$.colorbox({
 					overlayClose: true,
 					opacity: 0.5,
-					width: '600px',
+					width: '580px',
 					height: '400px',
 					href: false,
 					html: html

@@ -93,7 +93,8 @@
     <?php }else { ?>
     <!--[if !IE]><!-->
     <script type="text/javascript">
-        function login_popup(){jQuery.colorbox({width:"500px",height:"290px",opacity:0.4,fixed:true,href:"index.php?route=account/login_popup"});return false;}
+     //   function login_popup(){jQuery.colorbox({width:"500px",height:"290px",opacity:0.4,fixed:true,href:"index.php?route=account/login_popup"});return false;}
+        function login_popup(){jQuery.colorbox({width:"600px",height:"400px",opacity:0.4,fixed:true,href:"index.php?route=account/popuplogin#tab-Login"});return false;}
     </script>
     <!--><![endif]-->
     <div class="right"><a onclick="login_popup(); return false;" href="login" class="button"><?php echo $button_checkout; ?></a></div>
