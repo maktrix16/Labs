@@ -20,7 +20,7 @@ pre{background:none;border:none;font-size:12px;line-height:18px;font-family:inhe
 .success{background:#FFF;}
 .warning{background:#FFF;}
 .attention{background:#FFF;}
-.success .close,.warning .close,.attention .close,.information .close{float:right;position:absolute;top:12px;right:7px;padding-top:4px;padding-right:4px;cursor:pointer;}
+.success .close,.warning .close,.attention .close,.information .close{float:right;position:absolute;top:25px;right:20px;padding-top:5px;padding-right:5px;cursor:pointer;}
 #basket{margin:0 0 0 30%;}
 #basket h3{text-transform:capitalize;}
 #basket .img{width:100px;height:100px;float:left;margin:0 20px 0 0;}
@@ -30,7 +30,7 @@ pre{background:none;border:none;font-size:12px;line-height:18px;font-family:inhe
 .help{font-size:10px;font-weight:400;display:block;}
 table.form tr td:first-child{width:240px;}
 table.form td{padding:4px;}
-input.large-field,select.large-field{width:300px;}
+input.large-field,select.large-field{width:200px;}
 table.list thead td{background-color:#F7F7F7;padding:0 5px;}
 table.list thead td a,.list thead td{text-decoration:none;color:#222;font-weight:700;}
 table.list tbody td{vertical-align:top;padding:0 5px;}
@@ -259,7 +259,7 @@ a#button-filter{margin:5px 15px 10px;}
 .pagination .links a:hover{background:#F5F5F5;}
 .pagination .links b{display:inline-block;border:1px solid #EEE;font-weight:400;background:#F5F5F5;padding:4px 10px;}
 .pagination .results{float:right;padding-top:3px;}
-.category-name{padding:85px 0 0 0;display:inline-block;position: absolute;left: 0;width:960px;text-align:right;margin:0;}
+.category-name{padding:85px 0 0 0;display:block;position:absolute;width:960px;text-align:right;margin:0;}
 .category-name h1{margin:0 40px 0 0;font-size:15px;}
 .category-info .category-text{width:40%;float:left;line-height:2em;padding:0 0 0 5%;}
 .category-info .image{float:left;padding:0;}
@@ -420,8 +420,8 @@ a.colorbox.cboxElement{text-decoration:underline!important;}
 .Checkout #content{min-height:580px;}
 .checkout-heading{background:#7AAED5;font-weight:700;font-size:13px;color:#FFF;margin-bottom:0;padding:8px;border-bottom:1px solid #FFF;}
 .checkout-heading a{float:right;margin-top:1px;font-weight:400;color:#FFF!important;}
-.checkout-content{display:none;overflow:auto;padding:10px 0;}
-.checkout-content h2{margin:10px 0 10px;}
+.checkout-content{display:none;overflow:auto;padding:10px 0;width:540px;}
+.checkout-content h2{margin:10px 0 10px;color:#93B7DA;}
 .checkout-product tfoot td{text-align:right;padding:5px 15px;color:#333!important;}
 .check-out.buttons{width:100%;margin:0;float:left;display:block;}
 .contact-info{overflow:auto;float:left;margin-left:0;width:47%;}

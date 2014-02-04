@@ -1,8 +1,12 @@
 <?php echo $pheader; ?>
-<div > <!-- id="container" -->
+<style type="text/css">
+.popup-label{ color:#808080; float: left; width: 140px; }
+.popup-row{ height:40px; }
+.popup-message { font-size: 14px; color=#808080;}
+</style>
+<div  style="border:1px solid #A7A9AB; margin: 10px; padding:20px;" > <!-- id="container" -->
 
-<div style="width:580px; padding:10px;" > <!-- id="content" -->
-  
+<div> <!-- id="content" -->
   
   <div id="tabs" class="htabs">
         <a href="#tab-Login">Login</a>
