@@ -112,7 +112,7 @@ if($this->config->get('thebabyshop_body_font')!='' || $this->config->get('thebab
             $image_name = "server_label_labs.png";
         }
 ?>  
-    <div style="width:200px;height:200px;margin:0px;padding:0px;top:0px;left:0px;position:fixed;z-index:9999;background-image:url(image/<?php echo $image_name;?>);background-position:top left!important;background-repeat:repeat!important;"></div>
+    <div style="width:100px;height:100px;margin:0px;padding:0px;top:0px;right:0px;position:fixed;z-index:9999;background-image:url(image/<?php echo $image_name;?>);background-position:top left!important;background-repeat:repeat!important;"></div>
 <?php } ?>
 <div id="fb-root"></div>
 <script>(function(d, s, id) {
