@@ -38,6 +38,25 @@
 <link rel="stylesheet" type="text/css" href="catalog/view/theme/thebabyshop/stylesheet/customscrollbar.css" />
 <link rel="stylesheet" type="text/css" href="catalog/view/javascript/jquery/colorbox/colorbox.css" />
 <link rel="stylesheet" type="text/css" href="catalog/view/javascript/jquery/ui/themes/ui-lightness/jquery-ui-1.8.16.custom.css" />
+<?php 
+$CSName = $_SERVER["SERVER_NAME"];
+if ($CSName == "www.thebabyshop.com") {
+    $pageURL = "";
+    $http_s = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
+
+    if ($_SERVER["SERVER_PORT"] != "80")
+    {
+        $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+    } 
+    else {
+        $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+    }
+    if (($pageURL == $CSName."/") or ($pageURL == $CSName."/new-just-in/clothing") or ($pageURL == $CSName."/gifts-by-occasion/further-sale") or ($pageURL == $CSName."/girls/dress") or ($pageURL == $CSName."/little-things-for-little-ones/wall-decor") or ($pageURL == $CSName."/little-things-for-little-ones/all-766482377") or ($pageURL == $CSName."/girls/shoes-and-accessories-1783328943") or ($pageURL == $CSName."/about")) {
+        //echo $http_s.$CSName.$pageURL."\n";
+        ?><script type="text/javascript" src="thirdparty/crazyegg.js"></script><?php 
+    }
+}
+?> 
 <script type="text/javascript" src="catalog/view/javascript/jquery/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="catalog/view/javascript/jquery/ui/jquery-ui-1.8.16.custom.min.js"></script>
 <script type="text/javascript" src="catalog/view/javascript/common.js"></script>
@@ -112,7 +131,7 @@ if($this->config->get('thebabyshop_body_font')!='' || $this->config->get('thebab
             $image_name = "server_label_labs.png";
         }
 ?>  
-    <div style="width:100px;height:100px;margin:0px;padding:0px;top:0px;right:0px;position:fixed;z-index:9999;background-image:url(image/<?php echo $image_name;?>);background-position:top left!important;background-repeat:repeat!important;"></div>
+<div style="width:100px;height:100px;margin:0px;padding:0px;top:0px;right:0px;position:fixed;z-index:9999;background-image:url(image/<?php echo $image_name;?>);background-position:top left!important;background-repeat:repeat!important;"></div>
 <?php } ?>
 <div id="fb-root"></div>
 <script>(function(d, s, id) {
