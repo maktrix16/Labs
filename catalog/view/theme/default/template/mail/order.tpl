@@ -6,7 +6,8 @@
 </head>
 <body style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #000000;">
 <div style="width: 680px;"><a href="<?php echo $store_url; ?>" title="<?php echo $store_name; ?>"><img src="<?php echo $logo; ?>" alt="<?php echo $store_name; ?>" style="margin-bottom: 20px; border: none;" /></a>
-  <p style="margin-top: 0px; margin-bottom: 20px;"><?php echo $text_greeting; ?></p>
+    <p>Hello <?php echo substr($payment_address, 0, strpos($payment_address, '<')); ?>,</p>
+   <p style="margin-top: 0px; margin-bottom: 20px;"><?php echo $text_greeting; ?></p>
   <?php if ($customer_id) { ?>
   <p style="margin-top: 0px; margin-bottom: 20px;"><?php echo $text_link; ?></p>
   <p style="margin-top: 0px; margin-bottom: 20px;"><a href="<?php echo $link; ?>"><?php echo $link; ?></a></p>
@@ -26,12 +27,13 @@
         <td style="font-size: 12px;	border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; text-align: left; padding: 7px;"><b><?php echo $text_order_id; ?></b> <?php echo $order_id; ?><br />
           <b><?php echo $text_date_added; ?></b> <?php echo $date_added; ?><br />
           <b><?php echo $text_payment_method; ?></b> <?php echo $payment_method; ?><br />
-          <?php if ($shipping_method) { ?>
-          <b><?php echo $text_shipping_method; ?></b> <?php echo $shipping_method; ?>
-          <?php } ?></td>
+          </td>
         <td style="font-size: 12px;	border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; text-align: left; padding: 7px;"><b><?php echo $text_email; ?></b> <?php echo $email; ?><br />
           <b><?php echo $text_telephone; ?></b> <?php echo $telephone; ?><br />
-          <b><?php echo $text_ip; ?></b> <?php echo $ip; ?><br /></td>
+          <?php if ($shipping_method) { ?>
+          <b><?php echo $text_shipping_method; ?></b> <?php echo $shipping_method; ?>
+          <?php } ?>
+          </td>
       </tr>
     </tbody>
   </table>

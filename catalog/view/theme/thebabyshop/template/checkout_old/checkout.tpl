@@ -41,8 +41,8 @@
       <div class="checkout-content"></div>
     </div>
   </div>
-  <?php echo $content_bottom; ?></div>
-<script type="text/javascript"><!--
+  <?php echo </div>
+<scrip$content_bottom; ?>t type="text/javascript"><!--
 
 $('#changeshippingbox').live('click', function() {
 	if ($('#changeshippingbox').attr('checked')=='checked') {

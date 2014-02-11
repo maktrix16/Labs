@@ -11,11 +11,11 @@ class ModelAccountCustomer extends Model {
 		
 		$customer_group_info = $this->model_account_customer_group->getCustomerGroup($customer_group_id);
 		
-      	$this->db->query("INSERT INTO " . DB_PREFIX . "customer SET store_id = '" . (int)$this->config->get('config_store_id') . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', fax = '" . $this->db->escape($data['fax']) . "', salt = '" . $this->db->escape($salt = substr(md5(uniqid(rand(), true)), 0, 9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "', newsletter = '" . (isset($data['newsletter']) ? (int)$data['newsletter'] : 0) . "', customer_group_id = '" . (int)$customer_group_id . "', ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "', status = '1', approved = '" . (int)!$customer_group_info['approval'] . "', date_added = NOW()");
+          	$this->db->query("INSERT INTO " . DB_PREFIX . "customer SET store_id = '" . (int)$this->config->get('config_store_id') . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', fax = '" . $this->db->escape($data['fax']) . "', salt = '" . $this->db->escape($salt = substr(md5(uniqid(rand(), true)), 0, 9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "', newsletter = '" . (isset($data['newsletter']) ? (int)$data['newsletter'] : 0) . "', customer_group_id = '" . (int)$customer_group_id . "', ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "', status = '1', approved = '" . (int)!$customer_group_info['approval'] . "', date_added = NOW()");
       	
 		$customer_id = $this->db->getLastId();
 			
-      	$this->db->query("INSERT INTO " . DB_PREFIX . "address SET customer_id = '" . (int)$customer_id . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', company = '" . $this->db->escape($data['company']) . "', company_id = '" . $this->db->escape($data['company_id']) . "', tax_id = '" . $this->db->escape($data['tax_id']) . "', address_1 = '" . $this->db->escape($data['address_1']) . "', address_2 = '" . $this->db->escape($data['address_2']) . "', city = '" . $this->db->escape($data['city']) . "', postcode = '" . $this->db->escape($data['postcode']) . "', country_id = '" . (int)$data['country_id'] . "', zone_id = '" . (int)$data['zone_id'] . "'");
+         	$this->db->query("INSERT INTO " . DB_PREFIX . "address SET customer_id = '" . (int)$customer_id . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', company = '" . $this->db->escape($data['company']) . "', company_id = '" . $this->db->escape($data['company_id']) . "', tax_id = '" . $this->db->escape($data['tax_id']) . "', address_1 = '" . $this->db->escape($data['address_1']) . "', address_2 = '" . $this->db->escape($data['address_2']) . "', city = '" . $this->db->escape($data['city']) . "', postcode = '" . $this->db->escape($data['postcode']) . "', country_id = '" . (int)$data['country_id'] . "', zone_id = '" . (int)$data['zone_id'] . "'");
 		
 		$address_id = $this->db->getLastId();
 
@@ -23,21 +23,31 @@ class ModelAccountCustomer extends Model {
 		
 		$this->language->load('mail/customer');
 		
-		$subject = sprintf($this->language->get('text_subject'), $this->config->get('config_name'));
-		
-		$message = sprintf($this->language->get('text_welcome'), $this->config->get('config_name')) . "\n\n";
-		
-		if (!$customer_group_info['approval']) {
+                $subject = sprintf($this->language->get('text_subject'), $this->config->get('config_name'));
+                
+/*		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/mail/customer.tpl')) {
+			$html = $template->fetch($this->config->get('config_template') . '/template/mail/customer.tpl');
+		} else {
+			$html = $template->fetch('default/template/mail/customer.tpl');
+		}  */
+                
+                $m_mem_name = $data['firstname']." ".$data['lastname'];
+		// $message = sprintf($this->language->get('text_welcome'), $this->config->get('config_name')) . "\n\n";
+		$message = sprintf($this->language->get('text_welcome'), $m_mem_name) . "\n\n";
+                
+/*		if (!$customer_group_info['approval']) {
 			$message .= $this->language->get('text_login') . "\n";
 		} else {
 			$message .= $this->language->get('text_approval') . "\n";
-		}
-		
-		$message .= $this->url->link('account/login', '', 'SSL') . "\n\n";
+		}*/
+		$message .= $this->language->get('text_approval') . "\n";
+                $message .= $data['email'];
+		//$message .= $this->url->link('account/login', '', 'SSL') . "\n\n";
 		$message .= $this->language->get('text_services') . "\n\n";
-		$message .= $this->language->get('text_thanks') . "\n";
+		$message .= $this->language->get('text_thanks') . "\n\n";
 		$message .= $this->config->get('config_name');
-		
+                $message .= "</body></html>";
+		$html = $message;
 		$mail = new Mail();
 		$mail->protocol = $this->config->get('config_mail_protocol');
 		$mail->parameter = $this->config->get('config_mail_parameter');
@@ -50,7 +60,8 @@ class ModelAccountCustomer extends Model {
 		$mail->setFrom($this->config->get('config_email'));
 		$mail->setSender($this->config->get('config_name'));
 		$mail->setSubject(html_entity_decode($subject, ENT_QUOTES, 'UTF-8'));
-		$mail->setText(html_entity_decode($message, ENT_QUOTES, 'UTF-8'));
+	//	$mail->setText(html_entity_decode($message, ENT_QUOTES, 'UTF-8'));
+                $mail->setHTML(html_entity_decode($message, ENT_QUOTES, 'UTF-8'));
 		$mail->send();
 		
 		// Send to main admin email if new account email is enabled
@@ -70,7 +81,7 @@ class ModelAccountCustomer extends Model {
 			
 			$mail->setTo($this->config->get('config_email'));
 			$mail->setSubject(html_entity_decode($this->language->get('text_new_customer'), ENT_QUOTES, 'UTF-8'));
-			$mail->setText(html_entity_decode($message, ENT_QUOTES, 'UTF-8'));
+			$mail->setHTML(html_entity_decode($message, ENT_QUOTES, 'UTF-8'));
 			$mail->send();
 			
 			// Send to additional alert emails if new account email is enabled
