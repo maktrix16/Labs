@@ -40,6 +40,7 @@ class ModelAccountCustomer extends Model {
 		} else {
 			$message .= $this->language->get('text_approval') . "\n";
 		}*/
+                $message .= $this->language->get('text_login')."\n";
 		$message .= $this->language->get('text_approval') . "\n";
                 $message .= $data['email'];
 		//$message .= $this->url->link('account/login', '', 'SSL') . "\n\n";

@@ -8,6 +8,10 @@
 <div style="width: 680px;"><a href="<?php echo $store_url; ?>" title="<?php echo $store_name; ?>"><img src="<?php echo $logo; ?>" alt="<?php echo $store_name; ?>" style="margin-bottom: 20px; border: none;" /></a>
     <p>Hello <?php echo substr($payment_address, 0, strpos($payment_address, '<')); ?>,</p>
    <p style="margin-top: 0px; margin-bottom: 20px;"><?php echo $text_greeting; ?></p>
+  <?php if ($customer_id) { ?>
+  <p style="margin-top: 0px; margin-bottom: 20px;"><?php echo $text_link; ?></p>
+  <p style="margin-top: 0px; margin-bottom: 20px;"><a href="<?php echo $link; ?>"><?php echo $link; ?></a></p>
+  <?php } ?>
   <?php if ($download) { ?>
   <p style="margin-top: 0px; margin-bottom: 20px;"><?php echo $text_download; ?></p>
   <p style="margin-top: 0px; margin-bottom: 20px;"><a href="<?php echo $download; ?>"><?php echo $download; ?></a></p>
@@ -108,10 +112,6 @@
       <?php } ?>
     </tfoot>
   </table>
-  
-  <?php if ($customer_id) { ?>
-  <p style="margin-top: 0px; margin-bottom: 20px;"><?php echo $text_link; ?><br /><a href="<?php echo $link; ?>"><?php echo $link; ?></a></p>
-  <?php } ?>
   <p style="margin-top: 0px; margin-bottom: 20px;"><?php echo $text_footer; ?></p>
 </div>
 </body>

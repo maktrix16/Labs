@@ -1,11 +1,11 @@
 <?php
 // Text
-$_['text_subject']        = '%s - Thank you for registration';
+$_['text_subject']        = 'Welcome to %s';
 $_['text_welcome']        = '<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>TheBabyShop.com member registration</title></head><body style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #000000;">Hello %s,';
 $_['text_login']          = "<p>We've created your account - you're ready to shop.</p>";
 $_['text_approval']       = '<p>Sign into your account, using this email address:<br />';
 $_['text_services']       = '<br />and the password that you used whilst signing up.</p>';
-$_['text_thanks']         = "<p>Click <a href='http://www.thebabyshop.com'>here</a> to log in to your account.</p><p>TheBabyShop.com is the premier baby and children department store with:<br />- Over 50 European designers & brands<br />- Online fashion, toy, home & nursery department store<br />- Free worldwide delivery for all orders without minimums<br />- Free returns & exchanges</p><p>We look forward to welcoming you online soon!</p>";
+$_['text_thanks']         = "<p><a href='http://www.thebabyshop.com'>Click here to log in to your account.</a></p><p>TheBabyShop.com is the premier baby and children department store with:<br />- Over 50 European designers & brands<br />- Online fashion, toy, home & nursery department store<br />- Free worldwide delivery for all orders without minimums<br />- Free returns & exchanges</p><p>We look forward to welcoming you online soon!</p>";
 //
 ////$_['text_subject']        = '%s - Thank you for registering';
 //$_['text_welcome']        = 'Welcome and thank you for registering at %s!';

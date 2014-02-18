@@ -124,14 +124,11 @@ if($this->config->get('thebabyshop_body_font')!='' || $this->config->get('thebab
 </head>
 <body class="<?php echo $title; ?>" style="float:none;margin:0">
 <?php 
-    if ($_SERVER['HTTP_HOST']=='stage.thebabyshop.com' OR $_SERVER['HTTP_HOST'] == 'labs.thebabyshop.com') {
-        if ($_SERVER['HTTP_HOST']=='stage.thebabyshop.com') {
-            $image_name = "server_label_stage.png";
-        }else if ($_SERVER['HTTP_HOST']=='labs.thebabyshop.com') {
-            $image_name = "server_label_labs.png";
-        }
+    if ($_SERVER['HTTP_HOST']=='stage.thebabyshop.com' OR $_SERVER['HTTP_HOST'] == 'labs.thebabyshop.com' OR $_SERVER['HTTP_HOST'] == 'labstage.thebabyshop.com') {
+        $image_name = "server_label_".substr($_SERVER['HTTP_HOST'], 0, strpos($_SERVER['HTTP_HOST'], '.')).".png";
+ 
 ?>  
-<div style="width:100px;height:100px;margin:0px;padding:0px;top:0px;right:0px;position:fixed;z-index:9999;background-image:url(image/<?php echo $image_name;?>);background-position:top left!important;background-repeat:repeat!important;"></div>
+<div style="width:50px;height:215px;margin:0px;padding:0px;top:130px;right:0px;position:fixed;z-index:9999;background-image:url(image/<?php echo $image_name;?>);background-position:top left!important;background-repeat:repeat!important;"></div>
 <?php } ?>
 <div id="fb-root"></div>
 <script>(function(d, s, id) {
