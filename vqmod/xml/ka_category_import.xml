@@ -1,0 +1,33 @@
+<modification>
+	<id>CSV Category Import</id>
+	<version>1.0.1</version>
+	<vqmver>2.1.5</vqmver>
+	<author>karapuz (support@ka-station.com)</author>
+	<file name="admin/controller/common/header.php">
+		<operation>
+			<search position="after" index="1"><![CDATA[$this->url->link('tool/backup']]></search>
+			<add><![CDATA[//karapuz (ka_category_import.xml) 
+			if ($this->db->isKaInstalled('ka_category_import')) {
+				$this->data['ka_category_import'] = $this->url->link('tool/ka_category_import', 'token=' . $this->session->data['token'], 'SSL');
+			}
+///karapuz (ka_category_import.xml) 			]]></add>
+		</operation>
+	</file>
+	<file name="admin/language/english/common/header.php">
+		<operation>
+			<search position="after" index="1"><![CDATA[$_['text_backup']]]></search>
+			<add><![CDATA[//karapuz (ka_category_import.xml) 
+$_['CSV Category Import'] = 'CSV Category Import';
+///karapuz (ka_category_import.xml) ]]></add>
+		</operation>
+	</file>
+	<file name="admin/view/template/common/header.tpl">
+		<operation>
+			<search position="after" index="1"><![CDATA[<li><a href="<?php echo $backup;]]></search>
+			<add><![CDATA[<?php /* //karapuz (ka_category_import.xml)  */?>          <?php if (!empty($ka_category_import)) { ?>
+            <li><a href="<?php echo $ka_category_import; ?>"><?php echo $this->language->get('CSV Category Import'); ?></a></li>
+          <?php } ?>
+<?php /* ///karapuz (ka_category_import.xml)  */?>]]></add>
+		</operation>
+	</file>
+</modification>

@@ -3,7 +3,7 @@
   Project: Ka Extensions
   Author : karapuz <support@ka-station.com>
 
-  Version: 2.0 ($Revision: 25 $)
+  Version: 2.0 ($Revision: 43 $)
 
 */
 class KaDb {
@@ -52,7 +52,7 @@ class KaDb {
 
 	    $arr_values = array_values($arr);
     	foreach ($arr_values as $k => $v) {
-	    	$arr_values[$k] = "'" . mysql_real_escape_string($v) . "'";
+	    	$arr_values[$k] = "'" . $this->db->escape($v) . "'";
 	    }
 
     	$tbl = DB_PREFIX . $tbl;
@@ -80,7 +80,7 @@ class KaDb {
     	        $k = "`$k`";
         	}
 
-	        $v = "'" . mysql_real_escape_string($v) . "'";
+	        $v = "'" . $this->db->escape($v) . "'";
     		$r[] = $k . "=" . $v;
     	}
 
