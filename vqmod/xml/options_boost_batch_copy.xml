@@ -1,0 +1,266 @@
+<modification>
+
+	<id>Options Batch Copy - Pulled out from the Options Boost mod to allow use with other option mods</id>
+	<version>v156.3</version>
+	<vqmver>2.4.1</vqmver>
+	<author>qphoria</author>
+
+
+	<file name="admin/controller/catalog/product.php">
+
+		<operation  info="Add language file for option boost batch copy">
+            <search position="after"><![CDATA[
+            $this->language->load('catalog/product');
+            ]]></search>
+            <add><![CDATA[
+        $this->load->language('catalog/options_boost_batch'); //Q: Options Boost Batch Copy
+            ]]></add>
+        </operation>
+
+        <operation info="1.5.5 change for categories loading since it was replaced by autocomplete --shudders--">
+            <search position="after"><![CDATA[
+            $this->load->model('design/layout');
+            ]]></search>
+            <add><![CDATA[
+        	$this->load->model('catalog/category');
+			$this->data['categories'] = $this->model_catalog_category->getCategories(0);
+            ]]></add>
+        </operation>
+
+		<!-- This is the callback for the batch options category dropdown ajax call to load the products for that category -->
+        <operation>
+            <search position="before"><![CDATA[
+            public function index()
+            ]]></search>
+            <add><![CDATA[
+				// Options Boost
+            	public function ob_category() {
+					$this->load->model('catalog/product');
+
+					if (isset($this->request->get['category_id'])) {
+						$category_id = $this->request->get['category_id'];
+					} else {
+						$category_id = 0;
+					}
+
+					$product_data = array();
+
+					$results = $this->model_catalog_product->getProductsByCategoryId($category_id);
+
+					foreach ($results as $result) {
+						$product_data[] = array(
+							'product_id' => $result['product_id'],
+							'name'       => $result['name'],
+							'model'      => $result['model']
+						);
+					}
+
+					if (version_compare(VERSION, '1.5.1.3', '<')) { //v1.5.1.2 or earlier
+						$this->load->library('json');
+						$this->response->setOutput(Json::encode($product_data));
+					} else {
+						$this->response->setOutput(json_encode($product_data));
+					}
+
+				}//
+            ]]></add>
+        </operation>
+
+	</file>
+
+	<file name="admin/model/catalog/product.php">
+
+        <operation><!-- This should match twice -->
+            <search position="before"><![CDATA[
+            if (isset($data['product_option']))
+            ]]></search>
+            <add><![CDATA[
+        $this->addBatchOptions($data); //Q: Options Boost
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="before"><![CDATA[
+            function editProduct
+            ]]></search>
+            <add><![CDATA[
+    public function addBatchOptions($data) {
+		if (isset($data['product_batchoption'])) {
+
+      		foreach ($data['product_batchoption'] as $product_id) {
+
+      			// Delete all existing if delete box is checked for additional items
+      			if (isset($data['batchdelete'])) {
+      				$this->db->query("DELETE FROM " . DB_PREFIX . "product_option WHERE product_id = '" . (int)$product_id . "'");
+					$this->db->query("DELETE FROM " . DB_PREFIX . "product_option_value WHERE product_id = '" . (int)$product_id . "'");
+				}
+
+				// Add new Options
+				if (isset($data['product_option'])) {
+					foreach ($data['product_option'] as $k1 => $product_option) {
+						//$this->db->query("INSERT INTO " . DB_PREFIX . "product_option_value SET product_option_id = '" . (int)$product_option_id . "', product_id = '" . (int)$product_id . "', option_id = '" . (int)$product_option['option_id'] . "', option_value_id = '" . $this->db->escape($product_option_value['option_value_id']) . "', quantity = '" . (int)$product_option_value['quantity'] . "', subtract = '" . (int)$product_option_value['subtract'] . "', price = '" . (float)$product_option_value['price'] . "', price_prefix = '" . $this->db->escape($product_option_value['price_prefix']) . "', points = '" . (int)$product_option_value['points'] . "', points_prefix = '" . $this->db->escape($product_option_value['points_prefix']) . "', weight = '" . (float)$product_option_value['weight'] . "', weight_prefix = '" . $this->db->escape($product_option_value['weight_prefix']) . "'");
+						$this->db->query("INSERT INTO " . DB_PREFIX . "product_option SET product_id = '" . (int)$product_id . "', option_id = '" . (int)$product_option['option_id'] . "', required = '" . (int)$product_option['required'] . "'");
+
+						$product_option_id = $this->db->getLastId();
+
+						if (isset($product_option['product_option_value'])) {
+							foreach ($product_option['product_option_value'] as $k2 => $product_option_value) {
+								$this->db->query("INSERT INTO " . DB_PREFIX . "product_option_value SET product_option_id = '" . (int)$product_option_id . "', product_id = '" . (int)$product_id . "', option_id = '" . (int)$product_option['option_id'] . "', option_value_id = '" . $this->db->escape($product_option_value['option_value_id']) . "', quantity = '" . (int)$product_option_value['quantity'] . "', subtract = '" . (int)$product_option_value['subtract'] . "', price = '" . (float)$product_option_value['price'] . "', price_prefix = '" . $this->db->escape($product_option_value['price_prefix']) . "', points = '" . (int)$product_option_value['points'] . "', points_prefix = '" . $this->db->escape($product_option_value['points_prefix']) . "', weight = '" . (float)$product_option_value['weight'] . "', weight_prefix = '" . $this->db->escape($product_option_value['weight_prefix']) . "'");
+
+								$product_option_value_id = $this->db->getLastId();
+
+								//Q: Options Boost
+								if(isset($product_option_value['ob_sku'])) { $this->db->query("UPDATE " . DB_PREFIX . "product_option_value SET ob_sku = '" . $this->db->escape($product_option_value['ob_sku']) . "' WHERE product_option_value_id = '" . (int)$product_option_value_id . "'"); }
+								if(isset($product_option_value['ob_info'])) { $this->db->query("UPDATE " . DB_PREFIX . "product_option_value SET ob_info = '" . $this->db->escape($product_option_value['ob_info']) . "' WHERE product_option_value_id = '" . (int)$product_option_value_id . "'"); }
+								if(isset($product_option_value['ob_image'])) { $this->db->query("UPDATE " . DB_PREFIX . "product_option_value SET ob_image = '" . $this->db->escape($product_option_value['ob_image']) . "' WHERE product_option_value_id = '" . (int)$product_option_value_id . "'"); }
+								if(isset($product_option_value['ob_sku_override'])) { $this->db->query("UPDATE " . DB_PREFIX . "product_option_value SET ob_sku_override = '" . $this->db->escape($product_option_value['ob_sku_override']) . "' WHERE product_option_value_id = '" . (int)$product_option_value_id . "'"); }
+							}
+						}
+					}
+				}
+			}
+		}
+    }
+            ]]></add>
+        </operation>
+	</file>
+
+
+	<file name="admin/view/template/catalog/product_form.tpl">
+
+        <operation>
+            <search position="after" offset="1" index="2"><![CDATA[
+            <?php $option_row++; ?>
+            ]]></search>
+            <add><![CDATA[
+          <?php //Q: Option Batch Copy ?>
+		  <div style="padding-left:210px;">Batch Copy
+              <table border="0">
+                <tr>
+                  <td style="padding: 0;"><select id="category_batchoption" style="margin-bottom: 5px;" onchange="getProductsBatchOption();">
+                      <?php foreach ($categories as $category) { ?>
+                      <option value="<?php echo $category['category_id']; ?>"><?php echo addslashes($category['name']); ?></option>
+                      <?php } ?>
+                    </select></td>
+                    <td></td>
+                  <td><input type="checkbox" name="batchdelete" value="1" /><label for="batchdelete"><?php echo $this->language->get('entry_batchdelete');?></label></td>
+                </tr>
+                <tr>
+                  <td style="padding: 0;">
+                    <select multiple="multiple" id="batchoption_product" size="6" style="width: 300px;">
+                    </select>
+                  </td>
+                  <td style="vertical-align: middle;">
+                    <input type="button" value="--&gt;" onclick="addBatchOption();" />
+                    <br />
+                    <input type="button" value="&lt;--" onclick="removeBatchOption();" />
+                  </td>
+                  <td style="padding: 0;">
+                    <select multiple="multiple" id="batchoption" size="6" style="width: 300px;">
+                    </select>
+                  </td>
+                </tr>
+              </table>
+              <div id="product_batchoption"></div>
+            </div>
+            ]]></add>
+        </operation>
+
+			<operation info="change for 1.5.6 because stupid people changed it to be inline with another tag">
+            <search position="replace"><![CDATA[
+            <?php echo $footer; ?>
+            ]]></search>
+            <add><![CDATA[
+
+			<script type="text/javascript"><!--
+function addBatchOption() {
+	jQuery('#batchoption_product :selected').each(function() {
+		jQuery(this).remove();
+
+		jQuery('#batchoption option[value=\'' + jQuery(this).attr('value') + '\']').remove();
+
+		jQuery('#batchoption').append('<option value="' + jQuery(this).attr('value') + '">' + jQuery(this).text() + '</option>');
+
+		jQuery('#product_batchoption input[value=\'' + jQuery(this).attr('value') + '\']').remove();
+
+		jQuery('#product_batchoption').append('<input type="hidden" name="product_batchoption[]" value="' + jQuery(this).attr('value') + '" />');
+	});
+}
+
+function removeBatchOption() {
+	jQuery('#batchoption :selected').each(function() {
+		jQuery(this).remove();
+
+		jQuery('#batchoption_product').append('<option value="' + jQuery(this).attr('value') + '">' + jQuery(this).text() + '</option>');
+
+		jQuery('#product_batchoption input[value=\'' + jQuery(this).attr('value') + '\']').remove();
+	});
+}
+
+function getProducts() {
+	jQuery('#product option').remove();
+
+	<?php if (isset($this->request->get['product_id'])) {?>
+	var product_id = '<?php echo $this->request->get['product_id'] ?>';
+	<?php } else { ?>
+	var product_id = 0;
+	<?php } ?>
+
+	<?php if (defined('_JEXEC')) { ?>
+	var ajaxurl = 'index.php?option=com_aceshop&format=raw&tmpl=component&route=catalog/product/ob_category&token=<?php echo $token; ?>&category_id=' + jQuery('#category').attr('value');
+	<?php } else { ?>
+	var ajaxurl = 'index.php?route=catalog/product/ob_category&token=<?php echo $token; ?>&category_id=' + jQuery('#category').attr('value');
+	<?php } ?>
+
+	jQuery.ajax({
+		url: ajaxurl,
+		dataType: 'json',
+		success: function(data) {
+			for (i = 0; i < data.length; i++) {
+				if (data[i]['product_id'] == product_id) { continue; }
+	 			jQuery('#product').append('<option value="' + data[i]['product_id'] + '">' + data[i]['name'] + ' (' + data[i]['model'] + ') </option>');
+			}
+		}
+	});
+}
+
+function getProductsBatchOption() {
+	jQuery('#batchoption_product option').remove();
+
+	<?php if (isset($this->request->get['product_id'])) {?>
+	var product_id = '<?php echo $this->request->get['product_id'] ?>';
+	<?php } else { ?>
+	var product_id = 0;
+	<?php } ?>
+
+	<?php if (defined('_JEXEC')) { ?>
+	var ajaxurl = 'index.php?option=com_aceshop&format=raw&tmpl=component&route=catalog/product/ob_category&token=<?php echo $token; ?>&category_id=' + jQuery('#category_batchoption').attr('value');
+	<?php } else { ?>
+	var ajaxurl = 'index.php?route=catalog/product/ob_category&token=<?php echo $token; ?>&category_id=' + jQuery('#category_batchoption').attr('value');
+	<?php } ?>
+
+	jQuery.ajax({
+		url: ajaxurl,
+		dataType: 'json',
+		success: function(data) {
+			for (i = 0; i < data.length; i++) {
+				if (data[i]['product_id'] == product_id) { continue; }
+	 			jQuery('#batchoption_product').append('<option value="' + data[i]['product_id'] + '">' + data[i]['name'] + ' (' + data[i]['model'] + ') </option>');
+			}
+		}
+	});
+}
+
+
+getProductsBatchOption();
+
+//--></script>
+
+<?php echo $footer; ?>
+
+            ]]></add>
+        </operation>
+
+	</file>
+
+</modification>

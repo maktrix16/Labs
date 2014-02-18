@@ -28,14 +28,14 @@ jQuery(document).ready(function(){
 	}
 
 	//jQuery(':input[name^="option"]').change(function(){
-	jQuery(':input[name^="option"][type=\'checkbox\']:checked, :input[type=\'hidden\'], :input[name^="option"][type=\'radio\'], select[name^="option"]').change(function(){
+	jQuery(':input[name^="option"][type=\'checkbox\'], :input[type=\'hidden\'], :input[name^="option"][type=\'radio\'], select[name^="option"]').change(function(){
 		obUpdate(jQuery(this));
 	});
 
 	// Force a change on load to support mods like default product options and any "onload" adjustments
 	jQuery('select[name^="option"] :selected').change();
 	jQuery('input[name^="option"][type=radio]:checked').change();
-	jQuery('input[name^="option"][type=checkbox]:checked').change();
+	jQuery('input[name^="option"][type=checkbox]').change();
 });
 
 function getCookie(name) {

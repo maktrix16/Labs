@@ -5,6 +5,11 @@
 //-----------------------------------------
 
 // Duplicate of the product price code but don't format the values
+
+// Get original price directly to see if qty discount is in effect already
+$default_price_query = $this->db->query("SELECT price FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$this->request->get['product_id'] . "'");
+$origPrice = $default_price_query->row['price'];
+
 $discount_query = $this->model_catalog_product->getProductDiscounts($this->request->get['product_id']);
 
 $xdiscount = false;
@@ -36,6 +41,8 @@ $xspecial = $this->data['xspecial'];
 $disc_factor = 0;
 if ($xspecial) {
 	$disc_factor = ((float)$product_info['special'] / (float)$product_info['price']);
+} elseif ($origPrice != $xprice) {
+	$disc_factor = ((float)$xprice / (float)$origPrice);
 }
 
 //Q: Options Boost
@@ -66,6 +73,8 @@ foreach ($this->data['options'] as $k => $option) {
 			if ((float)$disc_factor) {
 				$old_option_value['raw_price'] = $option_value['raw_price'];
 				$option_value['raw_price'] *= $disc_factor;
+			} else {
+				$old_option_value['raw_price'] = $option_value['raw_price'];		
 			}
 
 			//if ($option_value['price_prefix'] == '%' && $xspecial) {
@@ -79,7 +88,11 @@ foreach ($this->data['options'] as $k => $option) {
 				} else {
 					$this->data['options'][$k]['option_value'][$j]['price'] = $this->currency->format($this->tax->calculate(($xprice * ((float)$option_value['raw_price']/100)), $product_info['tax_class_id'], $this->config->get('config_tax')));
 				}
-				$this->data['options'][$k]['option_value'][$j]['price_prefix'] = '+';
+				if (($option_value['raw_price'] + $xprice) < $xprice) {
+					$this->data['options'][$k]['option_value'][$j]['price_prefix'] = '';
+				} else {
+					$this->data['options'][$k]['option_value'][$j]['price_prefix'] = '+';
+				}
 			} elseif ($option_value['price_prefix'] == '*') { //check for *
 				//$options[$k]['option_value'][$j]['price'] = $this->currency->format($this->tax->calculate(($xprice * (float)$option_value['raw_price']), $product_info['tax_class_id'], $this->config->get('config_tax')));
 				if ($disc_factor && ($option['type'] == 'radio' || $option['type'] == 'checkbox')) {
@@ -90,11 +103,12 @@ foreach ($this->data['options'] as $k => $option) {
 				$this->data['options'][$k]['option_value'][$j]['price_prefix'] = '+';
 			} elseif ($option_value['price_prefix'] == '=') { //check for =
 				//$options[$k]['option_value'][$j]['price'] = $this->currency->format($this->tax->calculate((float)$option_value['raw_price'], $product_info['tax_class_id'], $this->config->get('config_tax')));
-				if ($disc_factor && ($option['type'] == 'radio' || $option['type'] == 'checkbox')) {
-					$this->data['options'][$k]['option_value'][$j]['price'] = '<strike>' . $this->currency->format($this->tax->calculate((float)$old_option_value['raw_price'], $product_info['tax_class_id'], $this->config->get('config_tax'))) . '</strike> <span style=color:red>' . $this->currency->format($this->tax->calculate($option_value['raw_price'], $product_info['tax_class_id'], $this->config->get('config_tax'))) . '</span>';
-				} else {
-					$this->data['options'][$k]['option_value'][$j]['price'] = $this->currency->format($this->tax->calculate((float)$option_value['raw_price'], $product_info['tax_class_id'], $this->config->get('config_tax')));
-				}
+				//if ($disc_factor && ($option['type'] == 'radio' || $option['type'] == 'checkbox')) {
+				//	$this->data['options'][$k]['option_value'][$j]['price'] = '<strike>' . $this->currency->format($this->tax->calculate((float)$old_option_value['raw_price'], $product_info['tax_class_id'], $this->config->get('config_tax'))) . '</strike> <span style=color:red>' . $this->currency->format($this->tax->calculate($option_value['raw_price'], $product_info['tax_class_id'], $this->config->get('config_tax'))) . '</span>';
+				//} else {
+				//	$this->data['options'][$k]['option_value'][$j]['price'] = $this->currency->format($this->tax->calculate((float)$old_option_value['raw_price'], $product_info['tax_class_id'], $this->config->get('config_tax')));
+				//}
+				$this->data['options'][$k]['option_value'][$j]['price'] = $this->currency->format($this->tax->calculate((float)$old_option_value['raw_price'], $product_info['tax_class_id'], $this->config->get('config_tax')));
 				$this->data['options'][$k]['option_value'][$j]['price_prefix'] = '';
 			} elseif ($option_value['price_prefix'] == '1') { //check for &. Don't display a price for this as it will change depending on the order and selected options
 				//$options[$k]['option_value'][$j]['price'] = $this->currency->format($this->tax->calculate((float)$option_value['raw_price'], $product_info['tax_class_id'], $this->config->get('config_tax')));
@@ -133,12 +147,12 @@ foreach ($this->data['options'] as $k => $option) {
 		}
 
 		// Add Stock Qty to name
-		//$this->data['options'][$k]['option_value'][$j]['name'] = $this->data['options'][$k]['option_value'][$j]['name'] . ' [' . $this->data['options'][$k]['option_value'][$j]['quantity'] . '] ';
+		$this->data['options'][$k]['option_value'][$j]['name'] = $this->data['options'][$k]['option_value'][$j]['name'] . ' [' . $this->data['options'][$k]['option_value'][$j]['quantity'] . '] ';
 
 		// Add Sku to name
 		//$this->data['options'][$k]['option_value'][$j]['name'] = $this->data['options'][$k]['option_value'][$j]['name'] . ' [' . $this->data['options'][$k]['option_value'][$j]['ob_sku'] . '] ';
 
-		
+
 		// Add (1x) suffix to one time options
 		$this->data['options'][$k]['option_value'][$j]['price'] = $this->data['options'][$k]['option_value'][$j]['price'] . $optsufx;
 	}

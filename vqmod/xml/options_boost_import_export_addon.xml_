@@ -1,0 +1,173 @@
+<modification>
+
+	<id>Options Boost support for Export-Import Addon by JNeuhoff</id>
+	<version>155.1</version>
+	<vqmver>2.3.0</vqmver>
+	<author>Qphoria</author>
+
+
+	<file name="admin/model/tool/export.php">
+		<operation>
+            <search position="after"><![CDATA[
+			$sortOrder= $option['sort_order'];
+            ]]></search>
+            <add trim="true"><![CDATA[
+			$obsku = $option['ob_sku'];
+			$obover = (isset($option['ob_sku_override']) && ($option['ob_sku_override'] != 'false' || $option['ob_sku_override'] != false)) ? 1 : 0;
+			//$obover = ((strtoupper($obover)=="TRUE") || (strtoupper($obover)=="YES") || (strtoupper($obover)=="ENABLED")) ? 1 : 0;
+			$obinfo = $option['ob_info'];
+			$obimage = $option['ob_image'];
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="replace"><![CDATA[
+			`weight_prefix`
+            ]]></search>
+            <add trim="true"><![CDATA[
+			`weight_prefix`,`ob_sku`,`ob_sku_override`,`ob_info`,`ob_image`
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="replace"><![CDATA[
+			'$weightPrefix'
+            ]]></search>
+            <add trim="true"><![CDATA[
+			'$weightPrefix','$obsku','$obover','$obinfo','$obimage'
+            ]]></add>
+        </operation>
+
+        <operation error="skip"><!-- uploadOptions function some versions of export/import -->
+            <search position="after"><![CDATA[
+			$sortOrder = $this->getCell($data,$i,15,'0');
+            ]]></search>
+            <add trim="true"><![CDATA[
+			$obsku = $this->getCell($data,$i,16,'');
+			$obover = $this->getCell($data,$i,17,'false');
+			$obinfo = $this->getCell($data,$i,18,'');
+			$obinfo = htmlentities ( $obinfo, ENT_QUOTES, $this->detect_encoding($obinfo) );
+			$obimage = $this->getCell($data,$i,19,'');
+            ]]></add>
+        </operation>
+
+		<operation error="skip"><!-- uploadOptions function newer versions of export/import -->
+            <search position="after" index="2"><![CDATA[
+			$sortOrder = $this->getCell($data,$i,$j++,'0');
+            ]]></search>
+            <add trim="true"><![CDATA[
+			$obsku = $this->getCell($data,$i,$j++,'');
+			$obover = $this->getCell($data,$i,$j++,'false');
+			$obinfo = $this->getCell($data,$i,$j++,'');
+			$obinfo = htmlentities ( $obinfo, ENT_QUOTES, $this->detect_encoding($obinfo) );
+			$obimage = $this->getCell($data,$i,$j++,'');
+            ]]></add>
+        </operation>
+
+        <operation><!-- validateOptions function -->
+            <search position="replace"><![CDATA[
+			"weight\nprefix", "sort_order"
+            ]]></search>
+            <add trim="true"><![CDATA[
+			"weight\nprefix", "sort_order", "ob_sku", "ob_sku\noverride", "ob_info", "ob_image"
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="after"><![CDATA[
+			$options[$i]['sort_order'] = $sortOrder;
+            ]]></search>
+            <add trim="true"><![CDATA[
+			$options[$i]['ob_sku'] = $obsku;
+			$options[$i]['ob_sku_override'] = ($obover == 'false') ? 0 : 1;
+			$options[$i]['ob_info'] = $obinfo;
+			$options[$i]['ob_image'] = $obimage;
+            ]]></add>
+        </operation>
+
+		<operation>
+            <search position="after"><![CDATA[
+			$query .= "  pov.weight_prefix,";
+            ]]></search>
+            <add trim="true"><![CDATA[
+			$query .= "  pov.ob_sku,";
+			$query .= "  pov.ob_sku_override,";
+			$query .= "  pov.ob_info,";
+			$query .= "  pov.ob_image,";
+            ]]></add>
+        </operation>
+
+		<operation error="skip"><!-- column widths for 1.5.4 or older versions of export import-->
+            <search position="after" offset="2"><![CDATA[
+			$worksheet->setColumn($j,$j++,max(strlen('weight'),5)+1,$textFormat);
+            ]]></search>
+            <add trim="true"><![CDATA[
+			$worksheet->setColumn($j,$j++,max(strlen('ob_sku'),9)+1,$textFormat);
+			$worksheet->setColumn($j,$j++,max(strlen('ob_sku_override'),10)+1,$textFormat);
+			$worksheet->setColumn($j,$j++,max(strlen('ob_info'),20)+1,$textFormat);
+			$worksheet->setColumn($j,$j++,max(strlen('ob_image'),20)+1,$textFormat);
+            ]]></add>
+        </operation>
+
+        <operation error="skip"><!-- column widths for 1.5.5 or new versions of export import-->
+            <search position="after" offset="2"><![CDATA[
+			$worksheet->getColumnDimensionByColumn($j++)->setWidth(max(strlen('weight'),5)+1,$textFormat);
+            ]]></search>
+            <add trim="true"><![CDATA[
+            $worksheet->getColumnDimensionByColumn($j++)->setWidth(max(strlen('ob_sku'),9)+1,$textFormat);
+            $worksheet->getColumnDimensionByColumn($j++)->setWidth(max(strlen('ob_sku_override'),10)+1,$textFormat);
+            $worksheet->getColumnDimensionByColumn($j++)->setWidth(max(strlen('ob_info'),20)+1,$textFormat);
+            $worksheet->getColumnDimensionByColumn($j++)->setWidth(max(strlen('ob_image'),20)+1,$textFormat);
+            ]]></add>
+        </operation>
+
+		<operation error="skip"><!-- column headings for 1.5.4 or older versions of export import-->
+            <search position="after" offset="2"><![CDATA[
+			$worksheet->writeString( $i, $j++, "weight\nprefix", $boxFormat  );
+            ]]></search>
+            <add trim="true"><![CDATA[
+			$worksheet->writeString( $i, $j++, "ob_sku", $boxFormat  );
+			$worksheet->writeString( $i, $j++, "ob_sku\noverride", $boxFormat  );
+			$worksheet->writeString( $i, $j++, "ob_info", $boxFormat  );
+			$worksheet->writeString( $i, $j++, "ob_image", $boxFormat  );
+            ]]></add>
+        </operation>
+
+        <operation error="skip"><!-- column headings for 1.5.5 or new versions of export import-->
+            <search position="after" offset="2"><![CDATA[
+			$this->setCell( $worksheet, $i, $j++, "weight\nprefix", $boxFormat  );
+            ]]></search>
+            <add trim="true"><![CDATA[
+            $this->setCell( $worksheet, $i, $j++, "ob_sku", $boxFormat  );
+            $this->setCell( $worksheet, $i, $j++, "ob_sku\noverride", $boxFormat  );
+            $this->setCell( $worksheet, $i, $j++, "ob_info", $boxFormat  );
+            $this->setCell( $worksheet, $i, $j++, "ob_image", $boxFormat  );
+            ]]></add>
+        </operation>
+
+		<operation error="skip"><!-- Write data for 1.5.4 or older versions of export import-->
+            <search position="after" offset="1"><![CDATA[
+			$worksheet->writeString( $i, $j++, $row['weight_prefix'], $textFormat );
+			]]></search>
+            <add trim="true"><![CDATA[
+			$worksheet->writeString( $i, $j++, $row['ob_sku'], $textFormat );
+			$worksheet->write( $i, $j++, (!$row['ob_sku_override']) ? "false" : "true", $textFormat );
+			$worksheet->writeString( $i, $j++, (html_entity_decode($row['ob_info'],ENT_QUOTES,'UTF-8') ), $textFormat );
+			$worksheet->writeString( $i, $j++, $row['ob_image'], $textFormat );
+            ]]></add>
+        </operation>
+
+        <operation error="skip"><!-- Write data for 1.5.5 or new versions of export import-->
+            <search position="after" offset="1"><![CDATA[
+			$this->setCell( $worksheet, $i, $j++, $row['weight_prefix'], $textFormat );
+			]]></search>
+            <add trim="true"><![CDATA[
+            $this->setCell( $worksheet, $i, $j++, $row['ob_sku'], $textFormat );
+            $this->setCell( $worksheet, $i, $j++, (!$row['ob_sku_override']) ? "false" : "true", $textFormat );
+            $this->setCell( $worksheet, $i, $j++, (html_entity_decode($row['ob_info'],ENT_QUOTES,'UTF-8') ), $textFormat );
+            $this->setCell( $worksheet, $i, $j++, $row['ob_image'], $textFormat );
+            ]]></add>
+        </operation>
+
+	</file>
+</modification>
