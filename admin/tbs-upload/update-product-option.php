@@ -67,9 +67,7 @@ if ($_POST["tDB"]=='tbs')  {
         $row = 1;
         $tot_err =0;
 	if (($handle = fopen($mysqlImportFilename, "r")) !== FALSE) {
-            
-        //    if ($data[0][0]!="product_option_value_id") {           }
-           
+   
             while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
                 
 		$num = count($data);
@@ -81,65 +79,43 @@ if ($_POST["tDB"]=='tbs')  {
                     break;
                 }
                 
-	//	echo "$num fields in line $row : ";
-        //        print_r($data);
-        //        echo "<br />\n";
-		
                 if ($row != 1) {
                     
                     if ($data[0] <> NULL) {
+                        
                         $sql = "UPDATE store_product_option_value SET ob_sku='".$data[1]."', ob_sku_override=".$data[2]." WHERE product_option_value_id=".$data[0];
-                        // $sql = "INSERT INTO store_product_to_category (product_id, category_id) VALUES (".$p_id.", ".$data[$c]." )";
                         $retval = mysql_query( $sql, $dbhandle );
+                        $num_rows = mysql_num_rows($retval);
+                        
+                        
                         if(! $retval ){
                             $tot_err++;
                             echo $row." - [".$data[0]."] - [".$data[1]."] - [".$data[2]."]";
-                            echo " <span class='upload-error'>[ Update Error !!! ]</span><br />\n";
-                        }
+                            echo " <span class='upload-error'>[ ".$retval." - Update Error !!! ]</span><br />\n";
+                        } //else{
+                          //  if ($num_rows<>1){
+                          //     echo $row." - [".$data[0]."] - [".$data[1]."] - [".$data[2]."] - <span class='upload-error'>".$retval."</span><br />\n";    
+                          //  }
+                       // }
+                            
+                        
                     }else {
+                        
                         $tot_err++;
                         echo $row." - [".$data[0]."] - [".$data[1]."] - [".$data[2]."]";
-                        echo " <span class='upload-error'>[ Data Error !!! ]</span><br />\n";
+                        echo " <span class='upload-error'>[ ".$retval." - Data Error !!! ]</span><br />\n";
                     }
                 }
                 
-/*		for ($c=0; $c < $num; $c++) {
-                    
-                     if ($c == 0) {
-			$p_id = $data[$c];
-                        
-                    }else {
-                       if ($data[$c] <> NULL ) {
-                            echo $p_id .",". $data[$c] . " - ";
-                           echo $row." - [".$data[0]."] - [".$data[1]."] - [".$data[2]."]";
-                   //         $sql = "UPDATE store_product_option_value SET ob_sku=value, ob_override=value2 WHERE product_option_value_id=some_value";
-                           // $sql = "INSERT INTO store_product_to_category (product_id, category_id) VALUES (".$p_id.", ".$data[$c]." )";
-                   //         $retval = mysql_query( $sql, $dbhandle );
-                   //        if(! $retval ){
-                   //             echo " <span class='upload-error'>[ Update Error !!! ]</span>";
-                    //        }
-			echo "<br />\n";
-			}
-                     
-                    }
-		}
-                echo "<br />\n";*/
                 $row++;
             }    
+            
             echo "<p class='upload-error'>Total ".$tot_err."'s update error !</p>";
-        /*    file = fopen($mysqlImportFilename, 'r');
-            while (($line = fgetcsv($file)) !== FALSE) {
-                //$line is an array of the csv elements
-                print_r($line);
-                echo "<br />\n";  
-            }*/
         
-        fclose($handle);    
+            fclose($handle);    
         }
         
         mysqli_close($dbhandle);
-        
-        
         
     }else{
         echo "";

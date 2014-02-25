@@ -4,7 +4,7 @@ $username = "root";
 $password = "money4ME";
 $hostname = "localhost"; 
 $dbname = "tbs";
-$file_name = "20140127_further_sale_products_category_update.csv";
+$file_name = "test-for-category_full.csv";
 
 //connection to the database
 $dbhandle = mysql_connect($hostname, $username, $password);
