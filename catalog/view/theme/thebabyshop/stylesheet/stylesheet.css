@@ -184,7 +184,7 @@ div.menu-category-wall-sub-name + div > ul > li{padding:4px 0;}
 #menu_oc > ul > li .category_lv > a{font-size:13px;border-bottom:1px solid #888;margin:0 10px 5px 0;cursor:default;color:#000!important;}
 #menu_oc > ul > li .category_lv > a:hover{color:#000!important;}
 .menu-13, .menu-35,.menu-71,.menu-113{display:none!important;}
-.menu-2 > div{display:inline-table!important;width:535px;min-height:230px;}
+.menu-2 > div{display:inline-table!important;width:720px;min-height:230px;}
 .menu-2 > div > ul{float:left;}
 .menu-3 > div, .menu-4 > div, .menu-5 > div{min-height:295px;}
 .category_l{margin:5px 0!important;}
